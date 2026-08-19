@@ -52,3 +52,38 @@ CuraVision AI aims to provide an AI-assisted platform where users can:
               └──────────┬──────────┘
                          ▼
                     PostgreSQL
+
+## Dataset
+
+This project uses the Chest X-Ray Pneumonia dataset.
+
+The dataset contains chest X-ray images classified into:
+
+- Normal
+- Pneumonia
+
+The dataset was used locally for model training and evaluation.
+
+### Dataset Source
+
+The dataset was obtained from Kaggle:
+
+https://www.kaggle.com/datasets/paultimothymooney/chest-xray-pneumonia
+
+### Dataset Structure
+
+The dataset contains:
+
+```text
+chest_xray/
+├── train/
+│   ├── NORMAL/
+│   └── PNEUMONIA/
+│
+├── val/
+│   ├── NORMAL/
+│   └── PNEUMONIA/
+│
+└── test/
+    ├── NORMAL/
+    └── PNEUMONIA/
