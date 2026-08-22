@@ -28,7 +28,7 @@ device = torch.device(
     "cuda" if torch.cuda.is_available() else "cpu"
 )
 
-print("CuraVision AI - Device:", device)
+print("Pneumonia-Detection-Application - Device:", device)
 
 
 # =========================

@@ -1,65 +1,87 @@
-# Pneumonia Detection Application
+# Pneumonia-Detection-Application 
 
-An AI-assisted medical imaging application that uses **Deep Learning and Computer Vision** to detect pneumonia from **Chest X-ray images**.
+### AI-Powered Multimodal Medical Assistant
 
-The application uses a trained **ResNet18** model to classify Chest X-ray images into two classes:
-
-- **NORMAL**
-- **PNEUMONIA**
-
-The project also uses **Grad-CAM** to provide a visual explanation of the model's prediction. A *Fast API* backend handles model inference, **PostgreSQL** stores prediction history, and **Stream lit** provides the user interface.
-
-> Medical Disclaimer: This project is an educational/research prototype. It is not a clinically validated diagnostic system and should not replace a qualified doctor or radiologist.
+> An AI-assisted medical platform combining Chest X-Ray analysis with a conversational medical assistant.
 
 ---
 
-## Features
+## 🚧 Project Status
 
-- Chest X-ray image upload
-- Pneumonia detection using ResNet18
-- Binary image classification
-- NORMAL vs PNEUMONIA prediction
-- Prediction confidence score
-- Grad-CAM visualization
-- Explainable AI
-- Fast API REST API
-- PostgreSQL database integration
-- Prediction history
-- Stream lit web interface
-- Interactive API documentation with Swagger UI
+**Currently under development**
+
+Pneumonia-Detection-Application is being developed as a major academic project focused on combining Deep Learning, Computer Vision, Generative AI, Backend Development, and Database Management into a single application.
 
 ---
 
-## Project Workflow
+## 🎯 Project Vision AI aims to provide an AI-assisted platform where users can:
+
+- Upload Chest X-Ray images
+- Analyze X-Ray images using Deep Learning
+- View model predictions and confidence scores
+- Visualize model attention using Grad-CAM
+- Ask medical questions through a conversational AI
+- Get information from trusted medical knowledge sources
+- Maintain analysis and chat history
+
+> **Medical Disclaimer:** This project is intended for educational and research purposes. AI predictions are not a substitute for professional medical diagnosis.
+
+---
+
+##  Planned Architecture
 
 ```text
-                 Chest X-ray
-                      |
-                      ↓
-             Image Preprocessing
-                      |
-                      ↓
-                  ResNet18
-                      |
-              ┌───────┴───────┐
-              ↓               ↓
-           NORMAL         PNEUMONIA
-              |               |
-              └───────┬───────┘
-                      ↓
-              Confidence Score
-                      |
-                      ↓
-                 Grad-CAM
-                      |
-                      ↓
-                 Fast API
-                      |
-                      ↓
-                PostgreSQL
-                      |
-                      ↓
-                 Stream lit
-                      |
-                      ↓
-                  User
+                    Pneumonia-Detection-Application
+                         │
+             ┌───────────┴───────────┐
+             │                       │
+             ▼                       ▼
+       Streamlit UI            Medical Chat
+             │                       │
+             └───────────┬───────────┘
+                         ▼
+                    FastAPI API
+                         │
+              ┌──────────┴──────────┐
+              ▼                     ▼
+       Chest X-Ray AI          RAG + LLM
+       PyTorch / ResNet        Medical QA
+              │                     │
+              └──────────┬──────────┘
+                         ▼
+                    PostgreSQL
+
+## Dataset
+
+This project uses the Chest X-Ray Pneumonia dataset.
+
+The dataset contains chest X-ray images classified into:
+
+- Normal
+- Pneumonia
+
+The dataset was used locally for model training and evaluation.
+
+### Dataset Source
+
+The dataset was obtained from Kaggle:
+
+https://www.kaggle.com/datasets/paultimothymooney/chest-xray-pneumonia
+
+### Dataset Structure
+
+The dataset contains:
+
+```text
+chest_xray/
+├── train/
+│   ├── NORMAL/
+│   └── PNEUMONIA/
+│
+├── val/
+│   ├── NORMAL/
+│   └── PNEUMONIA/
+│
+└── test/
+    ├── NORMAL/
+    └── PNEUMONIA/
