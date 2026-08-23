@@ -1,22 +1,9 @@
-from pathlib import Path
 import io
 
 from fastapi import FastAPI, File, UploadFile, HTTPException
-from fastapi.staticfiles import StaticFiles
 from PIL import Image, UnidentifiedImageError
 
 from backend.inference import predict_image
-from backend.gradcam import generate_gradcam
-
-
-# =========================================================
-# PROJECT PATHS
-# =========================================================
-
-PROJECT_ROOT = Path(__file__).resolve().parent.parent
-
-GRADCAM_DIR = PROJECT_ROOT / "assets" / "gradcam"
-GRADCAM_DIR.mkdir(parents=True, exist_ok=True)
 
 
 # =========================================================
@@ -27,17 +14,6 @@ app = FastAPI(
     title="Pneumonia Detection Application API",
     description="AI-based Chest X-Ray Pneumonia Detection API",
     version="1.0.0",
-)
-
-
-# =========================================================
-# STATIC GRAD-CAM FILES
-# =========================================================
-
-app.mount(
-    "/gradcam",
-    StaticFiles(directory=str(GRADCAM_DIR)),
-    name="gradcam",
 )
 
 
@@ -67,8 +43,8 @@ def health():
 
 # =========================================================
 # PREDICT
-# GRAD-CAM ENABLED
-# DATABASE TEMPORARILY DISABLED
+# PREDICTION ONLY
+# Grad-CAM + PostgreSQL temporarily disabled
 # =========================================================
 
 @app.post("/predict")
@@ -76,10 +52,7 @@ async def predict(file: UploadFile = File(...)):
 
     try:
 
-        # -------------------------------------------------
         # Validate file
-        # -------------------------------------------------
-
         if not file.content_type:
             raise HTTPException(
                 status_code=400,
@@ -92,10 +65,7 @@ async def predict(file: UploadFile = File(...)):
                 detail="Please upload a valid image file.",
             )
 
-        # -------------------------------------------------
         # Read image
-        # -------------------------------------------------
-
         image_bytes = await file.read()
 
         if not image_bytes:
@@ -104,27 +74,19 @@ async def predict(file: UploadFile = File(...)):
                 detail="Uploaded image is empty.",
             )
 
-        # -------------------------------------------------
         # Open image
-        # -------------------------------------------------
-
         try:
-
             image = Image.open(
                 io.BytesIO(image_bytes)
             ).convert("RGB")
 
         except UnidentifiedImageError:
-
             raise HTTPException(
                 status_code=400,
                 detail="Invalid or corrupted image file.",
             )
 
-        # -------------------------------------------------
-        # MODEL PREDICTION
-        # -------------------------------------------------
-
+        # Model prediction
         prediction_result = predict_image(image)
 
         prediction = None
@@ -155,7 +117,6 @@ async def predict(file: UploadFile = File(...)):
                 confidence = prediction_result[1]
 
         else:
-
             prediction = prediction_result
 
         if prediction is None:
@@ -163,51 +124,18 @@ async def predict(file: UploadFile = File(...)):
                 "Prediction result was empty."
             )
 
-        # -------------------------------------------------
-        # GRAD-CAM
-        # -------------------------------------------------
-
-        gradcam_url = None
-
-        try:
-
-            gradcam_path = generate_gradcam(image)
-
-            if gradcam_path:
-
-                gradcam_path = Path(
-                    str(gradcam_path)
-                )
-
-                gradcam_url = (
-                    f"/gradcam/{gradcam_path.name}"
-                )
-
-        except Exception as gradcam_error:
-
-            # Prediction should still succeed even if
-            # Grad-CAM fails.
-
-            print(
-                f"Grad-CAM failed: {gradcam_error}"
-            )
-
-        # -------------------------------------------------
-        # RESPONSE
-        # -------------------------------------------------
-
+        # Response
         return {
             "status": "success",
             "prediction": str(prediction),
             "confidence": confidence,
-            "gradcam": gradcam_url,
+            "gradcam": None,
         }
 
     except HTTPException:
         raise
 
     except Exception as e:
-
         raise HTTPException(
             status_code=500,
             detail=f"Prediction failed: {str(e)}",
