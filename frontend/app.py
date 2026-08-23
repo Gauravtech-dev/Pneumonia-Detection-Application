@@ -29,8 +29,6 @@ st.markdown(
     """
     <style>
 
-    /* ---------- GLOBAL ---------- */
-
     .stApp {
         background:
             radial-gradient(
@@ -63,9 +61,6 @@ st.markdown(
     header {
         visibility: hidden;
     }
-
-
-    /* ---------- NAVBAR ---------- */
 
     .topbar {
         display: flex;
@@ -102,9 +97,6 @@ st.markdown(
         margin-right: 7px;
         box-shadow: 0 0 10px rgba(34,197,94,0.7);
     }
-
-
-    /* ---------- HERO ---------- */
 
     .hero {
         text-align: center;
@@ -144,9 +136,6 @@ st.markdown(
         line-height: 1.7;
     }
 
-
-    /* ---------- SECTION ---------- */
-
     .section-title {
         color: #ffffff;
         font-size: 26px;
@@ -160,9 +149,6 @@ st.markdown(
         font-size: 14px;
         margin-bottom: 20px;
     }
-
-
-    /* ---------- UPLOAD CARD ---------- */
 
     .upload-card {
         background: rgba(13, 27, 43, 0.92);
@@ -186,18 +172,12 @@ st.markdown(
         margin-bottom: 15px;
     }
 
-
-    /* ---------- FILE UPLOADER ---------- */
-
     [data-testid="stFileUploader"] {
         background: #081624;
         border: 1px dashed #31516d;
         border-radius: 16px;
         padding: 12px;
     }
-
-
-    /* ---------- RESULT CARDS ---------- */
 
     .metric-card {
         background: linear-gradient(
@@ -230,13 +210,6 @@ st.markdown(
         color: #38bdf8;
     }
 
-    .metric-green {
-        color: #4ade80;
-    }
-
-
-    /* ---------- INFO CARDS ---------- */
-
     .info-card {
         background: #0b1928;
         border: 1px solid #21374d;
@@ -260,27 +233,20 @@ st.markdown(
         margin-top: 7px;
     }
 
-
-    /* ---------- BUTTON ---------- */
-
-    .stButton > button {
-        width: 100%;
-        background: #159bd1;
-        color: white;
-        border: 1px solid #38bdf8;
-        border-radius: 11px;
-        padding: 12px 18px;
-        font-size: 15px;
-        font-weight: 750;
+    .disclaimer {
+        background: #0b1928;
+        border: 1px solid #21374d;
+        border-radius: 15px;
+        padding: 18px;
+        margin-top: 25px;
+        color: #8298ad;
+        line-height: 1.7;
+        font-size: 13px;
     }
 
-    .stButton > button:hover {
-        background: #0d82b2;
-        color: white;
+    .disclaimer strong {
+        color: #ffffff;
     }
-
-
-    /* ---------- FOOTER ---------- */
 
     .footer {
         text-align: center;
@@ -302,7 +268,7 @@ st.markdown(
 # NAVBAR
 # =========================================================
 
-st.markdown(
+st.html(
     """
     <div class="topbar">
         <div class="logo">
@@ -314,8 +280,7 @@ st.markdown(
             Backend Online
         </div>
     </div>
-    """,
-    unsafe_allow_html=True,
+    """
 )
 
 
@@ -323,7 +288,7 @@ st.markdown(
 # HERO
 # =========================================================
 
-st.markdown(
+st.html(
     """
     <div class="hero">
 
@@ -343,16 +308,15 @@ st.markdown(
         </div>
 
     </div>
-    """,
-    unsafe_allow_html=True,
+    """
 )
 
 
 # =========================================================
-# UPLOAD SECTION
+# UPLOAD CARD
 # =========================================================
 
-st.markdown(
+st.html(
     """
     <div class="upload-card">
 
@@ -362,19 +326,21 @@ st.markdown(
 
         <div class="upload-text">
             Upload a chest X-ray image. The system will
-            return the model prediction and confidence score.
+            return the model prediction and confidence.
         </div>
 
     </div>
-    """,
-    unsafe_allow_html=True,
+    """
 )
 
+
+# =========================================================
+# FILE UPLOADER
+# =========================================================
 
 uploaded_file = st.file_uploader(
     "Drop your X-ray here",
     type=["jpg", "jpeg", "png"],
-    label_visibility="visible",
 )
 
 
@@ -384,16 +350,16 @@ uploaded_file = st.file_uploader(
 
 if uploaded_file is not None:
 
-    st.markdown(
-        '<div class="section-title">X-Ray Preview</div>',
-        unsafe_allow_html=True,
-    )
+    st.html(
+        """
+        <div class="section-title">
+            X-Ray Preview
+        </div>
 
-    st.markdown(
-        '<div class="section-subtitle">'
-        'Review the image before sending it to the model.'
-        '</div>',
-        unsafe_allow_html=True,
+        <div class="section-subtitle">
+            Review the image before sending it to the model.
+        </div>
+        """
     )
 
     preview_col, action_col = st.columns(
@@ -419,7 +385,7 @@ if uploaded_file is not None:
 
     with action_col:
 
-        st.markdown(
+        st.html(
             """
             <div class="info-card">
 
@@ -452,8 +418,7 @@ if uploaded_file is not None:
                 </div>
 
             </div>
-            """,
-            unsafe_allow_html=True,
+            """
         )
 
         st.write("")
@@ -461,6 +426,7 @@ if uploaded_file is not None:
         analyze = st.button(
             "🔍 Analyze X-Ray",
             type="primary",
+            use_container_width=True,
         )
 
 
@@ -476,10 +442,6 @@ if uploaded_file is not None:
 
             try:
 
-                # -------------------------------------------------
-                # Prepare file
-                # -------------------------------------------------
-
                 files = {
                     "file": (
                         uploaded_file.name,
@@ -488,30 +450,28 @@ if uploaded_file is not None:
                     )
                 }
 
-                # -------------------------------------------------
-                # Send request to Render FastAPI
-                # -------------------------------------------------
-
                 response = requests.post(
                     f"{API_URL}/predict",
                     files=files,
                     timeout=180,
                 )
 
-                # -------------------------------------------------
+                # =================================================
                 # SUCCESS
-                # -------------------------------------------------
+                # =================================================
 
                 if response.status_code == 200:
 
                     data = response.json()
 
                     prediction = data.get(
-                        "prediction"
+                        "prediction",
+                        "Unknown",
                     )
 
                     confidence = data.get(
-                        "confidence"
+                        "confidence",
+                        0,
                     )
 
                     # -------------------------------------------------
@@ -525,7 +485,6 @@ if uploaded_file is not None:
                         )
 
                         if 0 <= confidence_value <= 1:
-
                             confidence_value *= 100
 
                     except Exception:
@@ -537,18 +496,16 @@ if uploaded_file is not None:
                     # RESULT
                     # =================================================
 
-                    st.markdown(
-                        '<div class="section-title">'
-                        'Analysis Result'
-                        '</div>',
-                        unsafe_allow_html=True,
-                    )
+                    st.html(
+                        """
+                        <div class="section-title">
+                            Analysis Result
+                        </div>
 
-                    st.markdown(
-                        '<div class="section-subtitle">'
-                        'Output generated by the Chest ResNet18 model.'
-                        '</div>',
-                        unsafe_allow_html=True,
+                        <div class="section-subtitle">
+                            Output generated by the Chest ResNet18 model.
+                        </div>
+                        """
                     )
 
 
@@ -564,7 +521,7 @@ if uploaded_file is not None:
 
                     with result_col1:
 
-                        st.markdown(
+                        st.html(
                             f"""
                             <div class="metric-card">
 
@@ -577,8 +534,7 @@ if uploaded_file is not None:
                                 </div>
 
                             </div>
-                            """,
-                            unsafe_allow_html=True,
+                            """
                         )
 
 
@@ -588,7 +544,7 @@ if uploaded_file is not None:
 
                     with result_col2:
 
-                        st.markdown(
+                        st.html(
                             f"""
                             <div class="metric-card">
 
@@ -601,8 +557,7 @@ if uploaded_file is not None:
                                 </div>
 
                             </div>
-                            """,
-                            unsafe_allow_html=True,
+                            """
                         )
 
 
@@ -612,7 +567,7 @@ if uploaded_file is not None:
 
                     with result_col3:
 
-                        st.markdown(
+                        st.html(
                             """
                             <div class="metric-card">
 
@@ -625,8 +580,7 @@ if uploaded_file is not None:
                                 </div>
 
                             </div>
-                            """,
-                            unsafe_allow_html=True,
+                            """
                         )
 
 
@@ -636,9 +590,7 @@ if uploaded_file is not None:
 
                     st.write("")
 
-                    st.caption(
-                        "Model confidence"
-                    )
+                    st.caption("Model confidence")
 
                     st.progress(
                         min(
@@ -683,9 +635,9 @@ if uploaded_file is not None:
                     # DISCLAIMER
                     # =================================================
 
-                    st.markdown(
+                    st.html(
                         """
-                        <div class="explain-box">
+                        <div class="disclaimer">
 
                             <strong>Important:</strong><br>
 
@@ -697,8 +649,7 @@ if uploaded_file is not None:
                             healthcare professional.
 
                         </div>
-                        """,
-                        unsafe_allow_html=True,
+                        """
                     )
 
 
@@ -763,7 +714,7 @@ if uploaded_file is not None:
 # FOOTER
 # =========================================================
 
-st.markdown(
+st.html(
     """
     <div class="footer">
 
@@ -774,6 +725,5 @@ st.markdown(
         AI-assisted screening tool — not a medical diagnosis.
 
     </div>
-    """,
-    unsafe_allow_html=True,
+    """
 )
