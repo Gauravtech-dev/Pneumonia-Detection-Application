@@ -2,12 +2,9 @@ from pathlib import Path
 import io
 
 from fastapi import FastAPI, File, UploadFile, HTTPException
-from fastapi.staticfiles import StaticFiles
 from PIL import Image, UnidentifiedImageError
 
 from backend.inference import predict_image
-from backend.database import save_prediction, get_predictions
-from backend.gradcam import generate_gradcam
 
 
 # =========================================================
@@ -15,9 +12,6 @@ from backend.gradcam import generate_gradcam
 # =========================================================
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
-
-GRADCAM_DIR = PROJECT_ROOT / "assets" / "gradcam"
-GRADCAM_DIR.mkdir(parents=True, exist_ok=True)
 
 
 # =========================================================
@@ -28,17 +22,6 @@ app = FastAPI(
     title="Pneumonia Detection Application API",
     description="AI-based Chest X-Ray Pneumonia Detection API",
     version="1.0.0",
-)
-
-
-# =========================================================
-# STATIC GRAD-CAM FILES
-# =========================================================
-
-app.mount(
-    "/gradcam",
-    StaticFiles(directory=str(GRADCAM_DIR)),
-    name="gradcam",
 )
 
 
@@ -68,6 +51,8 @@ def health():
 
 # =========================================================
 # PREDICT
+# TEMPORARILY: PREDICTION ONLY
+# Grad-CAM and PostgreSQL disabled for testing
 # =========================================================
 
 @app.post("/predict")
@@ -75,7 +60,10 @@ async def predict(file: UploadFile = File(...)):
 
     try:
 
+        # -------------------------------------------------
         # Validate file
+        # -------------------------------------------------
+
         if not file.content_type:
             raise HTTPException(
                 status_code=400,
@@ -88,7 +76,10 @@ async def predict(file: UploadFile = File(...)):
                 detail="Please upload a valid image file.",
             )
 
+        # -------------------------------------------------
         # Read image
+        # -------------------------------------------------
+
         image_bytes = await file.read()
 
         if not image_bytes:
@@ -97,21 +88,26 @@ async def predict(file: UploadFile = File(...)):
                 detail="Uploaded image is empty.",
             )
 
+        # -------------------------------------------------
         # Open image
+        # -------------------------------------------------
+
         try:
+
             image = Image.open(
                 io.BytesIO(image_bytes)
             ).convert("RGB")
 
         except UnidentifiedImageError:
+
             raise HTTPException(
                 status_code=400,
                 detail="Invalid or corrupted image file.",
             )
 
-        # =================================================
+        # -------------------------------------------------
         # MODEL PREDICTION
-        # =================================================
+        # -------------------------------------------------
 
         prediction_result = predict_image(image)
 
@@ -143,54 +139,28 @@ async def predict(file: UploadFile = File(...)):
                 confidence = prediction_result[1]
 
         else:
+
             prediction = prediction_result
 
         if prediction is None:
+
             raise RuntimeError(
                 "Prediction result was empty."
             )
 
-        # =================================================
-        # GRAD-CAM
-        # ONLY ONE ARGUMENT
-        # =================================================
-
-        gradcam_path = generate_gradcam(image)
-
-        gradcam_url = None
-
-        if gradcam_path:
-            gradcam_path = Path(
-                str(gradcam_path)
-            )
-
-            gradcam_url = (
-                f"/gradcam/{gradcam_path.name}"
-            )
-
-        # =================================================
-        # DATABASE
-        # =================================================
-
-        save_prediction(
-            filename=file.filename or "unknown.jpg",
-            model_name="Chest ResNet18",
-            prediction=str(prediction),
-            confidence=confidence,
-        )
-
-        # =================================================
+        # -------------------------------------------------
         # RESPONSE
-        # =================================================
+        # -------------------------------------------------
 
         return {
             "status": "success",
-            "prediction": prediction,
+            "prediction": str(prediction),
             "confidence": confidence,
-            "gradcam": gradcam_url,
+            "gradcam": None,
         }
 
     except HTTPException:
+
         raise
 
     except Exception as e:
@@ -203,23 +173,14 @@ async def predict(file: UploadFile = File(...)):
 
 # =========================================================
 # PREDICTION HISTORY
+# TEMPORARILY DISABLED
 # =========================================================
 
 @app.get("/predictions")
 def predictions():
 
-    try:
-
-        rows = get_predictions()
-
-        return {
-            "status": "success",
-            "predictions": rows,
-        }
-
-    except Exception as e:
-
-        raise HTTPException(
-            status_code=500,
-            detail=f"Could not fetch predictions: {str(e)}",
-        )
+    return {
+        "status": "success",
+        "predictions": [],
+        "message": "Prediction history temporarily disabled.",
+    }
