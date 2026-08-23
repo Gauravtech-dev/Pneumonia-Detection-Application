@@ -2,9 +2,11 @@ from pathlib import Path
 import io
 
 from fastapi import FastAPI, File, UploadFile, HTTPException
+from fastapi.staticfiles import StaticFiles
 from PIL import Image, UnidentifiedImageError
 
 from backend.inference import predict_image
+from backend.gradcam import generate_gradcam
 
 
 # =========================================================
@@ -12,6 +14,9 @@ from backend.inference import predict_image
 # =========================================================
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
+
+GRADCAM_DIR = PROJECT_ROOT / "assets" / "gradcam"
+GRADCAM_DIR.mkdir(parents=True, exist_ok=True)
 
 
 # =========================================================
@@ -22,6 +27,17 @@ app = FastAPI(
     title="Pneumonia Detection Application API",
     description="AI-based Chest X-Ray Pneumonia Detection API",
     version="1.0.0",
+)
+
+
+# =========================================================
+# STATIC GRAD-CAM FILES
+# =========================================================
+
+app.mount(
+    "/gradcam",
+    StaticFiles(directory=str(GRADCAM_DIR)),
+    name="gradcam",
 )
 
 
@@ -51,8 +67,8 @@ def health():
 
 # =========================================================
 # PREDICT
-# TEMPORARILY: PREDICTION ONLY
-# Grad-CAM and PostgreSQL disabled for testing
+# GRAD-CAM ENABLED
+# DATABASE TEMPORARILY DISABLED
 # =========================================================
 
 @app.post("/predict")
@@ -143,9 +159,37 @@ async def predict(file: UploadFile = File(...)):
             prediction = prediction_result
 
         if prediction is None:
-
             raise RuntimeError(
                 "Prediction result was empty."
+            )
+
+        # -------------------------------------------------
+        # GRAD-CAM
+        # -------------------------------------------------
+
+        gradcam_url = None
+
+        try:
+
+            gradcam_path = generate_gradcam(image)
+
+            if gradcam_path:
+
+                gradcam_path = Path(
+                    str(gradcam_path)
+                )
+
+                gradcam_url = (
+                    f"/gradcam/{gradcam_path.name}"
+                )
+
+        except Exception as gradcam_error:
+
+            # Prediction should still succeed even if
+            # Grad-CAM fails.
+
+            print(
+                f"Grad-CAM failed: {gradcam_error}"
             )
 
         # -------------------------------------------------
@@ -156,11 +200,10 @@ async def predict(file: UploadFile = File(...)):
             "status": "success",
             "prediction": str(prediction),
             "confidence": confidence,
-            "gradcam": None,
+            "gradcam": gradcam_url,
         }
 
     except HTTPException:
-
         raise
 
     except Exception as e:
