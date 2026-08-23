@@ -4,21 +4,62 @@ import psycopg2
 from dotenv import load_dotenv
 
 
+# =========================================================
+# ENVIRONMENT
+# =========================================================
+
 load_dotenv()
 
+
+# =========================================================
+# DATABASE CONNECTION
+# =========================================================
 
 def get_connection():
 
     connection = psycopg2.connect(
         host=os.getenv("DB_HOST"),
-        port=os.getenv("DB_PORT"),
+        port=os.getenv("DB_PORT", "5432"),
         database=os.getenv("DB_NAME"),
         user=os.getenv("DB_USER"),
-        password=os.getenv("DB_PASSWORD")
+        password=os.getenv("DB_PASSWORD"),
+        connect_timeout=10,
     )
 
     return connection
 
+
+# =========================================================
+# CREATE TABLE
+# =========================================================
+
+def create_predictions_table():
+
+    connection = get_connection()
+    cursor = connection.cursor()
+
+    query = """
+        CREATE TABLE IF NOT EXISTS predictions (
+            id SERIAL PRIMARY KEY,
+            filename VARCHAR(255),
+            model VARCHAR(100),
+            prediction VARCHAR(50),
+            confidence DOUBLE PRECISION,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )
+    """
+
+    cursor.execute(query)
+
+    connection.commit()
+
+    cursor.close()
+    connection.close()
+
+
+# =========================================================
+# SAVE PREDICTION
+# =========================================================
 
 def save_prediction(
     filename,
@@ -32,7 +73,12 @@ def save_prediction(
 
     query = """
         INSERT INTO predictions
-        (filename, model, prediction, confidence)
+        (
+            filename,
+            model,
+            prediction,
+            confidence
+        )
         VALUES (%s, %s, %s, %s)
     """
 
@@ -42,7 +88,7 @@ def save_prediction(
             filename,
             model_name,
             prediction,
-            confidence
+            confidence,
         )
     )
 
@@ -51,6 +97,10 @@ def save_prediction(
     cursor.close()
     connection.close()
 
+
+# =========================================================
+# GET PREDICTION HISTORY
+# =========================================================
 
 def get_predictions():
 
