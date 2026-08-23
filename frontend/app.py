@@ -1,12 +1,12 @@
-import streamlit as st
 import requests
+import streamlit as st
 
 
 # =========================================================
 # CONFIGURATION
 # =========================================================
 
-API_URL = "http://127.0.0.1:8000"
+API_URL = "https://pneumonia-detection-application.onrender.com"
 
 
 # =========================================================
@@ -17,7 +17,7 @@ st.set_page_config(
     page_title="PneumoScan AI",
     page_icon="🫁",
     layout="wide",
-    initial_sidebar_state="collapsed"
+    initial_sidebar_state="collapsed",
 )
 
 
@@ -261,20 +261,6 @@ st.markdown(
     }
 
 
-    /* ---------- EXPLANATION ---------- */
-
-    .explain-box {
-        background: #0b1928;
-        border: 1px solid #21374d;
-        border-radius: 16px;
-        padding: 18px;
-        color: #91a6ba;
-        font-size: 13px;
-        line-height: 1.7;
-        margin-top: 15px;
-    }
-
-
     /* ---------- BUTTON ---------- */
 
     .stButton > button {
@@ -308,7 +294,7 @@ st.markdown(
 
     </style>
     """,
-    unsafe_allow_html=True
+    unsafe_allow_html=True,
 )
 
 
@@ -322,13 +308,14 @@ st.markdown(
         <div class="logo">
             🫁 Pneumo<span class="logo-blue">Scan</span> AI
         </div>
+
         <div class="online">
             <span class="green-dot"></span>
             Backend Online
         </div>
     </div>
     """,
-    unsafe_allow_html=True
+    unsafe_allow_html=True,
 )
 
 
@@ -339,47 +326,55 @@ st.markdown(
 st.markdown(
     """
     <div class="hero">
+
         <div class="hero-tag">
-            EXPLAINABLE AI • CHEST X-RAY ANALYSIS
+            AI • CHEST X-RAY ANALYSIS
         </div>
+
         <div class="hero-title">
             AI-Powered <span>Pneumonia</span><br>
             Screening
         </div>
+
         <div class="hero-text">
-            Analyze a chest X-ray using a ResNet18 deep-learning
-            model and visualize the regions influencing its
-            prediction with Grad-CAM.
+            Analyze a chest X-ray using a ResNet18
+            deep-learning model and receive an AI-based
+            pneumonia prediction with confidence.
         </div>
+
     </div>
     """,
-    unsafe_allow_html=True
+    unsafe_allow_html=True,
 )
 
 
 # =========================================================
-# UPLOAD
+# UPLOAD SECTION
 # =========================================================
 
 st.markdown(
     """
     <div class="upload-card">
-        <div class="upload-title">Start a New Analysis</div>
-        <div class="upload-text">
-            Upload a chest X-ray image. The system will return
-            the model prediction, confidence score and
-            explainability visualization.
+
+        <div class="upload-title">
+            Start a New Analysis
         </div>
+
+        <div class="upload-text">
+            Upload a chest X-ray image. The system will
+            return the model prediction and confidence score.
+        </div>
+
     </div>
     """,
-    unsafe_allow_html=True
+    unsafe_allow_html=True,
 )
 
 
 uploaded_file = st.file_uploader(
     "Drop your X-ray here",
     type=["jpg", "jpeg", "png"],
-    label_visibility="visible"
+    label_visibility="visible",
 )
 
 
@@ -391,50 +386,81 @@ if uploaded_file is not None:
 
     st.markdown(
         '<div class="section-title">X-Ray Preview</div>',
-        unsafe_allow_html=True
+        unsafe_allow_html=True,
     )
 
     st.markdown(
-        '<div class="section-subtitle">Review the image before sending it to the model.</div>',
-        unsafe_allow_html=True
+        '<div class="section-subtitle">'
+        'Review the image before sending it to the model.'
+        '</div>',
+        unsafe_allow_html=True,
     )
 
     preview_col, action_col = st.columns(
         [1.35, 0.65],
-        gap="large"
+        gap="large",
     )
+
+    # -----------------------------------------------------
+    # IMAGE
+    # -----------------------------------------------------
 
     with preview_col:
 
         st.image(
             uploaded_file,
             caption=uploaded_file.name,
-            use_container_width=True
+            use_container_width=True,
         )
+
+    # -----------------------------------------------------
+    # MODEL INFO
+    # -----------------------------------------------------
 
     with action_col:
 
         st.markdown(
             """
             <div class="info-card">
-                <div class="info-label">Model</div>
-                <div class="info-value">Chest ResNet18</div>
+
+                <div class="info-label">
+                    Model
+                </div>
+
+                <div class="info-value">
+                    Chest ResNet18
+                </div>
+
                 <br>
-                <div class="info-label">Input</div>
-                <div class="info-value">Chest X-Ray</div>
+
+                <div class="info-label">
+                    Input
+                </div>
+
+                <div class="info-value">
+                    Chest X-Ray
+                </div>
+
                 <br>
-                <div class="info-label">Explainability</div>
-                <div class="info-value">Grad-CAM</div>
+
+                <div class="info-label">
+                    Backend
+                </div>
+
+                <div class="info-value">
+                    FastAPI + Render
+                </div>
+
             </div>
             """,
-            unsafe_allow_html=True
+            unsafe_allow_html=True,
         )
 
         st.write("")
 
         analyze = st.button(
             "🔍 Analyze X-Ray",
-            type="primary"
+            type="primary",
         )
 
 
@@ -450,23 +476,31 @@ if uploaded_file is not None:
 
             try:
 
+                # -------------------------------------------------
+                # Prepare file
+                # -------------------------------------------------
+
                 files = {
                     "file": (
                         uploaded_file.name,
                         uploaded_file.getvalue(),
-                        uploaded_file.type
+                        uploaded_file.type,
                     )
                 }
+
+                # -------------------------------------------------
+                # Send request to Render FastAPI
+                # -------------------------------------------------
 
                 response = requests.post(
                     f"{API_URL}/predict",
                     files=files,
-                    timeout=120
+                    timeout=180,
                 )
 
-                # =================================================
+                # -------------------------------------------------
                 # SUCCESS
-                # =================================================
+                # -------------------------------------------------
 
                 if response.status_code == 200:
 
@@ -480,14 +514,9 @@ if uploaded_file is not None:
                         "confidence"
                     )
 
-                    gradcam = data.get(
-                        "gradcam"
-                    )
-
-
-                    # ---------------------------------------------
-                    # CONFIDENCE
-                    # ---------------------------------------------
+                    # -------------------------------------------------
+                    # Confidence conversion
+                    # -------------------------------------------------
 
                     try:
 
@@ -496,88 +525,114 @@ if uploaded_file is not None:
                         )
 
                         if 0 <= confidence_value <= 1:
+
                             confidence_value *= 100
 
                     except Exception:
 
-                        confidence_value = 0
+                        confidence_value = 0.0
 
 
-                    # =============================================
+                    # =================================================
                     # RESULT
-                    # =============================================
+                    # =================================================
 
                     st.markdown(
-                        '<div class="section-title">Analysis Result</div>',
-                        unsafe_allow_html=True
+                        '<div class="section-title">'
+                        'Analysis Result'
+                        '</div>',
+                        unsafe_allow_html=True,
                     )
 
                     st.markdown(
-                        '<div class="section-subtitle">Output generated by the Chest ResNet18 model.</div>',
-                        unsafe_allow_html=True
+                        '<div class="section-subtitle">'
+                        'Output generated by the Chest ResNet18 model.'
+                        '</div>',
+                        unsafe_allow_html=True,
                     )
 
 
                     result_col1, result_col2, result_col3 = st.columns(
                         3,
-                        gap="medium"
+                        gap="medium",
                     )
 
+
+                    # -------------------------------------------------
+                    # Prediction
+                    # -------------------------------------------------
 
                     with result_col1:
 
                         st.markdown(
                             f"""
                             <div class="metric-card">
+
                                 <div class="metric-label">
                                     Prediction
                                 </div>
+
                                 <div class="metric-value">
                                     {prediction}
                                 </div>
+
                             </div>
                             """,
-                            unsafe_allow_html=True
+                            unsafe_allow_html=True,
                         )
 
+
+                    # -------------------------------------------------
+                    # Confidence
+                    # -------------------------------------------------
 
                     with result_col2:
 
                         st.markdown(
                             f"""
                             <div class="metric-card">
+
                                 <div class="metric-label">
                                     Confidence
                                 </div>
+
                                 <div class="metric-value metric-blue">
                                     {confidence_value:.2f}%
                                 </div>
+
                             </div>
                             """,
-                            unsafe_allow_html=True
+                            unsafe_allow_html=True,
                         )
 
+
+                    # -------------------------------------------------
+                    # Model
+                    # -------------------------------------------------
 
                     with result_col3:
 
                         st.markdown(
                             """
                             <div class="metric-card">
+
                                 <div class="metric-label">
                                     Model
                                 </div>
+
                                 <div class="metric-value">
                                     ResNet18
                                 </div>
+
                             </div>
                             """,
-                            unsafe_allow_html=True
+                            unsafe_allow_html=True,
                         )
 
 
-                    # ---------------------------------------------
+                    # =================================================
                     # CONFIDENCE BAR
-                    # ---------------------------------------------
+                    # =================================================
 
                     st.write("")
 
@@ -589,16 +644,16 @@ if uploaded_file is not None:
                         min(
                             max(
                                 confidence_value / 100,
-                                0.0
+                                0.0,
                             ),
-                            1.0
+                            1.0,
                         )
                     )
 
 
-                    # ---------------------------------------------
-                    # STATUS
-                    # ---------------------------------------------
+                    # =================================================
+                    # PREDICTION STATUS
+                    # =================================================
 
                     prediction_text = str(
                         prediction
@@ -624,88 +679,31 @@ if uploaded_file is not None:
                         )
 
 
-                    # =============================================
-                    # GRAD-CAM
-                    # =============================================
+                    # =================================================
+                    # DISCLAIMER
+                    # =================================================
 
-                    if gradcam:
+                    st.markdown(
+                        """
+                        <div class="explain-box">
 
-                        st.markdown(
-                            '<div class="section-title">Explainable AI</div>',
-                            unsafe_allow_html=True
-                        )
+                            <strong>Important:</strong><br>
 
-                        st.markdown(
-                            '<div class="section-subtitle">See which image regions influenced the prediction.</div>',
-                            unsafe_allow_html=True
-                        )
+                            This application provides an
+                            AI-assisted prediction based on a
+                            chest X-ray image. It is not a
+                            clinical diagnosis and should not
+                            replace evaluation by a qualified
+                            healthcare professional.
 
-
-                        if str(gradcam).startswith(
-                            "http://"
-                        ) or str(gradcam).startswith(
-                            "https://"
-                        ):
-
-                            gradcam_url = str(
-                                gradcam
-                            )
-
-                        else:
-
-                            gradcam_url = (
-                                f"{API_URL}"
-                                f"{gradcam}"
-                            )
-
-
-                        original_col, gradcam_col = st.columns(
-                            2,
-                            gap="large"
-                        )
-
-
-                        with original_col:
-
-                            st.markdown(
-                                "**Original X-Ray**"
-                            )
-
-                            st.image(
-                                uploaded_file,
-                                use_container_width=True
-                            )
-
-
-                        with gradcam_col:
-
-                            st.markdown(
-                                "**Grad-CAM Attention Map**"
-                            )
-
-                            st.image(
-                                gradcam_url,
-                                use_container_width=True
-                            )
-
-
-                        st.markdown(
-                            """
-                            <div class="explain-box">
-                                <strong>How this helps:</strong><br>
-                                Grad-CAM highlights image regions that
-                                contributed to the model's prediction.
-                                This makes the deep-learning model more
-                                interpretable, but the visualization is
-                                not a clinical diagnosis.
-                            </div>
-                            """,
-                            unsafe_allow_html=True
-                        )
+                        </div>
+                        """,
+                        unsafe_allow_html=True,
+                    )
 
 
                 # =================================================
-                # ERROR
+                # API ERROR
                 # =================================================
 
                 else:
@@ -727,19 +725,32 @@ if uploaded_file is not None:
                         )
 
 
+            # =====================================================
+            # CONNECTION ERROR
+            # =====================================================
+
             except requests.exceptions.ConnectionError:
 
                 st.error(
-                    "Cannot connect to the Docker backend."
+                    "Cannot connect to the Render backend."
                 )
 
+
+            # =====================================================
+            # TIMEOUT
+            # =====================================================
 
             except requests.exceptions.Timeout:
 
                 st.error(
-                    "The analysis request timed out."
+                    "The analysis request timed out. "
+                    "Please try again."
                 )
 
+
+            # =====================================================
+            # OTHER ERROR
+            # =====================================================
 
             except Exception as e:
 
@@ -749,180 +760,20 @@ if uploaded_file is not None:
 
 
 # =========================================================
-# HISTORY
-# =========================================================
-
-st.markdown(
-    '<div class="section-title">Scan History</div>',
-    unsafe_allow_html=True
-)
-
-st.markdown(
-    '<div class="section-subtitle">Previous predictions stored in PostgreSQL.</div>',
-    unsafe_allow_html=True
-)
-
-
-if st.button(
-    "📋 Load Scan History"
-):
-
-    try:
-
-        response = requests.get(
-            f"{API_URL}/predictions",
-            timeout=30
-        )
-
-        if response.status_code == 200:
-
-            data = response.json()
-
-            predictions = data.get(
-                "predictions",
-                []
-            )
-
-
-            if predictions:
-
-                # ---------------------------------------------
-                # Statistics
-                # ---------------------------------------------
-
-                total_scans = len(
-                    predictions
-                )
-
-                pneumonia_count = 0
-                normal_count = 0
-
-
-                for row in predictions:
-
-                    try:
-
-                        prediction_value = str(
-                            row[3]
-                        ).upper()
-
-                        if "PNEUMONIA" in prediction_value:
-
-                            pneumonia_count += 1
-
-                        elif "NORMAL" in prediction_value:
-
-                            normal_count += 1
-
-                    except Exception:
-                        pass
-
-
-                stat1, stat2, stat3 = st.columns(
-                    3
-                )
-
-
-                with stat1:
-
-                    st.markdown(
-                        f"""
-                        <div class="metric-card">
-                            <div class="metric-label">
-                                Total Scans
-                            </div>
-                            <div class="metric-value">
-                                {total_scans}
-                            </div>
-                        </div>
-                        """,
-                        unsafe_allow_html=True
-                    )
-
-
-                with stat2:
-
-                    st.markdown(
-                        f"""
-                        <div class="metric-card">
-                            <div class="metric-label">
-                                Pneumonia Predictions
-                            </div>
-                            <div class="metric-value">
-                                {pneumonia_count}
-                            </div>
-                        </div>
-                        """,
-                        unsafe_allow_html=True
-                    )
-
-
-                with stat3:
-
-                    st.markdown(
-                        f"""
-                        <div class="metric-card">
-                            <div class="metric-label">
-                                Normal Predictions
-                            </div>
-                            <div class="metric-value metric-green">
-                                {normal_count}
-                            </div>
-                        </div>
-                        """,
-                        unsafe_allow_html=True
-                    )
-
-
-                st.write("")
-
-                st.dataframe(
-                    predictions,
-                    use_container_width=True,
-                    hide_index=True
-                )
-
-
-            else:
-
-                st.info(
-                    "No scan history found."
-                )
-
-
-        else:
-
-            st.error(
-                f"Could not load history: "
-                f"{response.status_code}"
-            )
-
-
-    except requests.exceptions.ConnectionError:
-
-        st.error(
-            "Cannot connect to the Docker backend."
-        )
-
-
-    except Exception as e:
-
-        st.error(
-            f"Error loading history: {str(e)}"
-        )
-
-
-# =========================================================
 # FOOTER
 # =========================================================
 
 st.markdown(
     """
     <div class="footer">
+
         🫁 PneumoScan AI<br>
-        ResNet18 • Grad-CAM • PostgreSQL • FastAPI • Docker<br>
+
+        ResNet18 • FastAPI • Docker • Render<br>
+
         AI-assisted screening tool — not a medical diagnosis.
+
     </div>
     """,
-    unsafe_allow_html=True
+    unsafe_allow_html=True,
 )
