@@ -10,7 +10,7 @@ from torchvision import models, transforms
 
 
 # =========================================================
-# PATHS
+# PROJECT PATHS
 # =========================================================
 
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -47,21 +47,21 @@ print(f"Grad-CAM Device: {DEVICE}")
 
 
 # =========================================================
-# RESNET18 MODEL
+# LOAD RESNET18
 # =========================================================
 
-model = models.resnet18(
+gradcam_model = models.resnet18(
     weights=None
 )
 
-model.fc = torch.nn.Linear(
-    model.fc.in_features,
+gradcam_model.fc = torch.nn.Linear(
+    gradcam_model.fc.in_features,
     2
 )
 
 
 # =========================================================
-# LOAD TRAINED MODEL
+# LOAD TRAINED CHECKPOINT
 # =========================================================
 
 checkpoint = torch.load(
@@ -91,15 +91,18 @@ for key, value in checkpoint.items():
     clean_checkpoint[new_key] = value
 
 
-model.load_state_dict(
+gradcam_model.load_state_dict(
     clean_checkpoint,
     strict=False
 )
 
-model.to(DEVICE)
-model.eval()
+gradcam_model.to(DEVICE)
 
-print("Grad-CAM model loaded successfully")
+gradcam_model.eval()
+
+print(
+    "Grad-CAM model loaded successfully"
+)
 
 
 # =========================================================
@@ -107,7 +110,10 @@ print("Grad-CAM model loaded successfully")
 # =========================================================
 
 transform = transforms.Compose([
-    transforms.Resize((224, 224)),
+
+    transforms.Resize(
+        (224, 224)
+    ),
 
     transforms.ToTensor(),
 
@@ -127,20 +133,31 @@ transform = transforms.Compose([
 
 
 # =========================================================
-# GRAD-CAM
+# GENERATE GRAD-CAM
 # =========================================================
 
-def generate_gradcam(image: Image.Image):
+def generate_gradcam(
+    image: Image.Image
+):
 
     if not isinstance(
         image,
         Image.Image
     ):
-        image = Image.fromarray(image)
+        image = Image.fromarray(
+            image
+        )
 
     image = image.convert("RGB")
 
-    original = np.array(image)
+    original = np.array(
+        image
+    )
+
+
+    # =====================================================
+    # PREPARE INPUT
+    # =====================================================
 
     input_tensor = transform(
         image
@@ -151,20 +168,22 @@ def generate_gradcam(image: Image.Image):
     )
 
 
-    # -----------------------------------------------------
-    # Target layer
-    # -----------------------------------------------------
+    # =====================================================
+    # TARGET LAYER
+    # =====================================================
 
-    target_layer = model.layer4[-1]
+    target_layer = (
+        gradcam_model.layer4[-1]
+    )
 
 
     activations = []
     gradients = []
 
 
-    # -----------------------------------------------------
-    # Forward hook
-    # -----------------------------------------------------
+    # =====================================================
+    # FORWARD HOOK
+    # =====================================================
 
     def forward_hook(
         module,
@@ -172,12 +191,14 @@ def generate_gradcam(image: Image.Image):
         output
     ):
 
-        activations.append(output)
+        activations.append(
+            output
+        )
 
 
-    # -----------------------------------------------------
-    # Backward hook
-    # -----------------------------------------------------
+    # =====================================================
+    # BACKWARD HOOK
+    # =====================================================
 
     def backward_hook(
         module,
@@ -205,47 +226,62 @@ def generate_gradcam(image: Image.Image):
 
     try:
 
-        # -------------------------------------------------
-        # Forward
-        # -------------------------------------------------
+        # =================================================
+        # FORWARD PASS
+        # =================================================
 
-        output = model(
+        output = gradcam_model(
             input_tensor
         )
 
 
-        predicted_class = torch.argmax(
-            output,
-            dim=1
-        ).item()
+        predicted_class = (
+            torch.argmax(
+                output,
+                dim=1
+            ).item()
+        )
 
 
-        # -------------------------------------------------
-        # Backward
-        # -------------------------------------------------
+        # =================================================
+        # BACKWARD PASS
+        # =================================================
 
-        model.zero_grad()
+        gradcam_model.zero_grad()
 
         score = output[
-            :,
+            0,
             predicted_class
         ]
 
         score.backward()
 
 
-        # -------------------------------------------------
-        # Activations + gradients
-        # -------------------------------------------------
+        # =================================================
+        # CHECK HOOK RESULTS
+        # =================================================
+
+        if not activations:
+
+            raise RuntimeError(
+                "Grad-CAM activations were not captured."
+            )
+
+        if not gradients:
+
+            raise RuntimeError(
+                "Grad-CAM gradients were not captured."
+            )
+
 
         activation = activations[0]
 
         gradient = gradients[0]
 
 
-        # -------------------------------------------------
-        # Calculate weights
-        # -------------------------------------------------
+        # =================================================
+        # GLOBAL AVERAGE POOLING
+        # =================================================
 
         weights = torch.mean(
             gradient,
@@ -254,14 +290,15 @@ def generate_gradcam(image: Image.Image):
         )
 
 
-        # -------------------------------------------------
+        # =================================================
         # CAM
-        # -------------------------------------------------
+        # =================================================
 
         cam = torch.sum(
             weights * activation,
             dim=1
         )
+
 
         cam = F.relu(
             cam
@@ -277,20 +314,22 @@ def generate_gradcam(image: Image.Image):
         )
 
 
-        # -------------------------------------------------
-        # Normalize
-        # -------------------------------------------------
+        # =================================================
+        # NORMALIZE CAM
+        # =================================================
 
         cam -= cam.min()
 
-        if cam.max() != 0:
+        cam_max = cam.max()
 
-            cam /= cam.max()
+        if cam_max > 0:
+
+            cam /= cam_max
 
 
-        # -------------------------------------------------
-        # Resize
-        # -------------------------------------------------
+        # =================================================
+        # RESIZE CAM
+        # =================================================
 
         height, width = (
             original.shape[:2]
@@ -302,9 +341,9 @@ def generate_gradcam(image: Image.Image):
         )
 
 
-        # -------------------------------------------------
-        # Heatmap
-        # -------------------------------------------------
+        # =================================================
+        # CREATE HEATMAP
+        # =================================================
 
         heatmap = np.uint8(
             255 * cam
@@ -316,9 +355,9 @@ def generate_gradcam(image: Image.Image):
         )
 
 
-        # -------------------------------------------------
-        # Original → BGR
-        # -------------------------------------------------
+        # =================================================
+        # RGB → BGR
+        # =================================================
 
         original_bgr = cv2.cvtColor(
             original,
@@ -326,9 +365,9 @@ def generate_gradcam(image: Image.Image):
         )
 
 
-        # -------------------------------------------------
-        # Overlay
-        # -------------------------------------------------
+        # =================================================
+        # OVERLAY
+        # =================================================
 
         overlay = cv2.addWeighted(
             original_bgr,
@@ -339,9 +378,9 @@ def generate_gradcam(image: Image.Image):
         )
 
 
-        # -------------------------------------------------
-        # Save
-        # -------------------------------------------------
+        # =================================================
+        # SAVE FILE
+        # =================================================
 
         filename = (
             f"gradcam_"
@@ -354,10 +393,17 @@ def generate_gradcam(image: Image.Image):
         )
 
 
-        cv2.imwrite(
+        success = cv2.imwrite(
             str(output_path),
             overlay
         )
+
+
+        if not success:
+
+            raise RuntimeError(
+                "Failed to save Grad-CAM image."
+            )
 
 
         return output_path
