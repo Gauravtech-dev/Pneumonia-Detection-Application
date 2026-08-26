@@ -1,3 +1,5 @@
+import os
+
 import requests
 import streamlit as st
 
@@ -6,7 +8,10 @@ import streamlit as st
 # CONFIGURATION
 # =========================================================
 
-API_URL = "https://pneumonia-detection-application.onrender.com"
+API_URL = os.getenv(
+    "PNEUMONIA_API_URL",
+    "https://pneumonia-detection-application.onrender.com",
+).rstrip("/")
 
 
 # =========================================================
@@ -414,7 +419,7 @@ if uploaded_file is not None:
                 </div>
 
                 <div class="info-value">
-                    FastAPI + Render
+                    FastAPI + PostgreSQL
                 </div>
 
             </div>
@@ -464,15 +469,23 @@ if uploaded_file is not None:
 
                     data = response.json()
 
-                    prediction = data.get(
+                    result = data.get("result", {})
+
+                    if not isinstance(result, dict):
+                        result = {}
+
+                    prediction = result.get(
                         "prediction",
-                        "Unknown",
+                        data.get("prediction", "Unknown"),
                     )
 
-                    confidence = data.get(
+                    confidence = result.get(
                         "confidence",
-                        0,
+                        data.get("confidence", 0),
                     )
+
+                    gradcam_data = data.get("gradcam")
+                    database_data = data.get("database", {})
 
                     # -------------------------------------------------
                     # Confidence conversion
@@ -632,6 +645,85 @@ if uploaded_file is not None:
 
 
                     # =================================================
+                    # GRAD-CAM
+                    # =================================================
+
+                    if isinstance(gradcam_data, dict):
+
+                        gradcam_url = gradcam_data.get("url")
+
+                        if gradcam_url:
+
+                            st.html(
+                                """
+                                <div class="section-title">
+                                    Grad-CAM Explanation
+                                </div>
+
+                                <div class="section-subtitle">
+                                    Visual explanation of the image regions
+                                    that influenced the model prediction.
+                                </div>
+                                """
+                            )
+
+                            if gradcam_url.startswith("/"):
+                                gradcam_full_url = (
+                                    f"{API_URL}{gradcam_url}"
+                                )
+                            else:
+                                gradcam_full_url = gradcam_url
+
+                            try:
+
+                                gradcam_response = requests.get(
+                                    gradcam_full_url,
+                                    timeout=30,
+                                )
+
+                                if gradcam_response.status_code == 200:
+
+                                    st.image(
+                                        gradcam_response.content,
+                                        caption="Grad-CAM",
+                                        use_container_width=True,
+                                    )
+
+                                else:
+
+                                    st.warning(
+                                        "Grad-CAM image could not be loaded."
+                                    )
+
+                            except requests.exceptions.RequestException:
+
+                                st.warning(
+                                    "Grad-CAM image could not be loaded."
+                                )
+
+
+                    # =================================================
+                    # DATABASE STATUS
+                    # =================================================
+
+                    if isinstance(database_data, dict):
+
+                        database_status = database_data.get("status")
+
+                        if database_status == "saved":
+
+                            st.success(
+                                "Prediction saved to database."
+                            )
+
+                        elif database_status == "failed":
+
+                            st.warning(
+                                "Prediction completed, but database save failed."
+                            )
+
+
+                    # =================================================
                     # DISCLAIMER
                     # =================================================
 
@@ -683,7 +775,7 @@ if uploaded_file is not None:
             except requests.exceptions.ConnectionError:
 
                 st.error(
-                    "Cannot connect to the Render backend."
+                    f"Cannot connect to the FastAPI backend: {API_URL}"
                 )
 
 
@@ -721,8 +813,6 @@ st.html(
         🫁 PneumoScan AI<br>
 
         ResNet18 • FastAPI • Docker • Render<br>
-
-        AI-assisted screening tool — not a medical diagnosis.
 
     </div>
     """
