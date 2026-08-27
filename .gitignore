@@ -3,36 +3,30 @@
 venv/
 env/
 
-# Environment variables / secrets
-.env
-.env.*
-!.env.example
-
-# Python cache
+# Python
 __pycache__/
 *.py[cod]
-*$py.class
+*.pyo
 
-# Jupyter
-.ipynb_checkpoints/
+# Environment / secrets
+.env
 
 # IDE
 .vscode/
 .idea/
 
+# Streamlit
+.streamlit/secrets.toml
+
+# Generated Grad-CAM files
+assets/gradcam/*
+
+# Local database files
+data/database/
+
 # Logs
 *.log
 
-# OS files
+# OS
 .DS_Store
 Thumbs.db
-
-# Streamlit secrets
-.streamlit/secrets.toml
-
-# Generated Grad-CAM images
-assets/gradcam/*
-
-# Temporary files
-tmp/
-temp/

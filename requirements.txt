@@ -1,9 +1,13 @@
 fastapi
 uvicorn[standard]
 python-multipart
+streamlit
+requests
 pillow
 numpy
 opencv-python-headless
+torch
+torchvision
 psycopg2-binary
 python-dotenv
 grad-cam
