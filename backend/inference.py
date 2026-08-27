@@ -31,7 +31,10 @@ def load_model():
     model = resnet18(weights=None)
     model.fc = nn.Linear(model.fc.in_features, 2)
 
-    checkpoint = torch.load(MODEL_PATH, map_location=DEVICE)
+    checkpoint = torch.load(
+        MODEL_PATH,
+        map_location=DEVICE,
+    )
 
     if isinstance(checkpoint, dict):
         if "state_dict" in checkpoint:
@@ -47,6 +50,8 @@ def load_model():
     model.load_state_dict(checkpoint, strict=True)
     model.to(DEVICE)
     model.eval()
+
+    print(f"ResNet18 loaded successfully on {DEVICE}")
     return model
 
 

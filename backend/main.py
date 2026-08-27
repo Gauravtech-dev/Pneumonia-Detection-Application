@@ -46,7 +46,7 @@ def startup():
         print(f"Database startup warning: {exc}")
 
 
-@app.api_route("/", methods=["GET", "HEAD"])
+@app.get("/")
 def root():
     return {
         "message": "Pneumonia Detection Application API",

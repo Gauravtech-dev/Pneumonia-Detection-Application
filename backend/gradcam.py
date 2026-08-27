@@ -16,6 +16,9 @@ GRADCAM_DIR.mkdir(parents=True, exist_ok=True)
 
 
 def generate_gradcam(image: Image.Image):
+    if not isinstance(image, Image.Image):
+        image = Image.fromarray(image)
+
     image = image.convert("RGB")
     original = np.asarray(image)
 
@@ -44,17 +47,29 @@ def generate_gradcam(image: Image.Image):
 
         output[0, predicted_index].backward()
 
-        if not activations or not gradients:
-            raise RuntimeError("Grad-CAM activations/gradients were not captured.")
+        if not activations:
+            raise RuntimeError("Grad-CAM activations were not captured.")
+
+        if not gradients:
+            raise RuntimeError("Grad-CAM gradients were not captured.")
 
         activation = activations[0]
         gradient = gradients[0]
 
-        weights = torch.mean(gradient, dim=(2, 3), keepdim=True)
-        cam = torch.sum(weights * activation, dim=1)
-        cam = F.relu(cam)
+        weights = torch.mean(
+            gradient,
+            dim=(2, 3),
+            keepdim=True,
+        )
 
+        cam = torch.sum(
+            weights * activation,
+            dim=1,
+        )
+
+        cam = F.relu(cam)
         cam = cam.squeeze().detach().cpu().numpy()
+
         cam -= cam.min()
 
         maximum = cam.max()
@@ -69,7 +84,10 @@ def generate_gradcam(image: Image.Image):
             cv2.COLORMAP_JET,
         )
 
-        original_bgr = cv2.cvtColor(original, cv2.COLOR_RGB2BGR)
+        original_bgr = cv2.cvtColor(
+            original,
+            cv2.COLOR_RGB2BGR,
+        )
 
         overlay = cv2.addWeighted(
             original_bgr,
