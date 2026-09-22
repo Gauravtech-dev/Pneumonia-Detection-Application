@@ -8,7 +8,6 @@ from fastapi import FastAPI, File, HTTPException, UploadFile
 from fastapi.staticfiles import StaticFiles
 from PIL import Image, UnidentifiedImageError
 
-from backend.database import create_table, get_predictions, save_prediction
 from backend.gradcam import generate_gradcam
 from backend.inference import predict_image
 
@@ -24,26 +23,19 @@ MIN_WIDTH = 160
 MIN_HEIGHT = 160
 MIN_FILE_BYTES = 8 * 1024
 
+
 app = FastAPI(
     title="Pneumonia Detection Application API",
     description="AI-assisted chest X-ray pneumonia detection API",
     version="1.0.0",
 )
 
+
 app.mount(
     "/assets",
     StaticFiles(directory=str(ASSETS_DIR)),
     name="assets",
 )
-
-
-@app.on_event("startup")
-def startup():
-    try:
-        create_table()
-        print("Database table ready.")
-    except Exception as exc:
-        print(f"Database startup warning: {exc}")
 
 
 @app.get("/")
@@ -91,10 +83,9 @@ def basic_image_validation(image: Image.Image, file_size: int):
 def xray_like_check(image: Image.Image):
     """
     Lightweight heuristic gate.
-    It is NOT a medical X-ray-vs-non-X-ray ML classifier.
-    It intentionally avoids rejecting grayscale X-rays based on RGB
-    channel differences because valid X-rays can be stored as RGB images.
+    This is NOT a medical X-ray-vs-non-X-ray ML classifier.
     """
+
     gray = np.asarray(image.convert("L"), dtype=np.float32)
 
     if gray.ndim != 2 or gray.size == 0:
@@ -152,7 +143,11 @@ def xray_like_check(image: Image.Image):
         score += 0.20
 
     if score < 0.50:
-        return False, score, "The image does not look sufficiently like a chest X-ray."
+        return (
+            False,
+            score,
+            "The image does not look sufficiently like a chest X-ray.",
+        )
 
     return True, score, ""
 
@@ -180,7 +175,10 @@ async def predict(file: UploadFile = File(...)):
         )
 
     try:
-        image = Image.open(io.BytesIO(image_bytes)).convert("RGB")
+        image = Image.open(
+            io.BytesIO(image_bytes)
+        ).convert("RGB")
+
     except UnidentifiedImageError:
         raise HTTPException(
             status_code=400,
@@ -193,7 +191,10 @@ async def predict(file: UploadFile = File(...)):
     )
 
     if not valid:
-        raise HTTPException(status_code=400, detail=message)
+        raise HTTPException(
+            status_code=400,
+            detail=message,
+        )
 
     xray_ok, xray_score, xray_reason = xray_like_check(image)
 
@@ -205,8 +206,10 @@ async def predict(file: UploadFile = File(...)):
 
     try:
         result = predict_image(image)
+
     except Exception as exc:
         print(f"Prediction error: {exc}")
+
         raise HTTPException(
             status_code=500,
             detail="Model prediction failed.",
@@ -214,67 +217,41 @@ async def predict(file: UploadFile = File(...)):
 
     prediction = result["prediction"]
     confidence = float(result["confidence"])
+
     uncertain = confidence < CONFIDENCE_THRESHOLD
 
     gradcam = None
 
     try:
         gradcam = generate_gradcam(image)
+
     except Exception as exc:
         print(f"Grad-CAM warning: {exc}")
 
-    database_status = "failed"
-
-    try:
-        save_prediction(
-            filename=file.filename or "uploaded_image",
-            model_name=MODEL_NAME,
-            prediction=prediction,
-            confidence=confidence,
-        )
-        database_status = "saved"
-    except Exception as exc:
-        print(f"Database save failed: {exc}")
-
     return {
         "status": "success",
+
         "input": {
             "filename": file.filename or "uploaded_image",
             "type": "chest_xray",
+
             "xray_validation": {
                 "accepted": True,
                 "score": round(xray_score, 2),
             },
         },
+
         "result": {
             "prediction": prediction,
             "confidence": confidence,
             "uncertain": uncertain,
             "threshold": CONFIDENCE_THRESHOLD,
         },
+
         "gradcam": gradcam,
-        "database": {
-            "status": database_status,
-        },
+
         "model": MODEL_NAME,
     }
-
-
-@app.get("/predictions")
-def predictions():
-    try:
-        rows = get_predictions()
-        return {
-            "status": "success",
-            "count": len(rows),
-            "predictions": rows,
-        }
-    except Exception as exc:
-        print(f"Prediction history error: {exc}")
-        raise HTTPException(
-            status_code=500,
-            detail="Could not load prediction history.",
-        )
 
 
 if __name__ == "__main__":

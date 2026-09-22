@@ -8,6 +8,5 @@ numpy
 opencv-python-headless
 torch
 torchvision
-psycopg2-binary
 python-dotenv
 grad-cam

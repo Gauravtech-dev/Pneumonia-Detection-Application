@@ -1,0 +1,254 @@
+RESNET18 ERROR ANALYSIS
+============================================================
+
+Total images: 624
+Correct predictions: 543
+Wrong predictions: 81
+Accuracy: 87.02%
+
+MISCLASSIFIED IMAGES
+============================================================
+
+1. Actual: NORMAL | Predicted: PNEUMONIA | Confidence: 71.32%
+Path: C:\Users\ACER\.cache\kagglehub\datasets\paultimothymooney\chest-xray-pneumonia\versions\2\chest_xray\test\NORMAL\IM-0011-0001-0002.jpeg
+
+2. Actual: NORMAL | Predicted: PNEUMONIA | Confidence: 99.35%
+Path: C:\Users\ACER\.cache\kagglehub\datasets\paultimothymooney\chest-xray-pneumonia\versions\2\chest_xray\test\NORMAL\IM-0015-0001.jpeg
+
+3. Actual: NORMAL | Predicted: PNEUMONIA | Confidence: 96.36%
+Path: C:\Users\ACER\.cache\kagglehub\datasets\paultimothymooney\chest-xray-pneumonia\versions\2\chest_xray\test\NORMAL\IM-0019-0001.jpeg
+
+4. Actual: NORMAL | Predicted: PNEUMONIA | Confidence: 100.00%
+Path: C:\Users\ACER\.cache\kagglehub\datasets\paultimothymooney\chest-xray-pneumonia\versions\2\chest_xray\test\NORMAL\IM-0022-0001.jpeg
+
+5. Actual: NORMAL | Predicted: PNEUMONIA | Confidence: 98.88%
+Path: C:\Users\ACER\.cache\kagglehub\datasets\paultimothymooney\chest-xray-pneumonia\versions\2\chest_xray\test\NORMAL\IM-0065-0001.jpeg
+
+6. Actual: NORMAL | Predicted: PNEUMONIA | Confidence: 99.60%
+Path: C:\Users\ACER\.cache\kagglehub\datasets\paultimothymooney\chest-xray-pneumonia\versions\2\chest_xray\test\NORMAL\IM-0071-0001.jpeg
+
+7. Actual: NORMAL | Predicted: PNEUMONIA | Confidence: 100.00%
+Path: C:\Users\ACER\.cache\kagglehub\datasets\paultimothymooney\chest-xray-pneumonia\versions\2\chest_xray\test\NORMAL\IM-0073-0001.jpeg
+
+8. Actual: NORMAL | Predicted: PNEUMONIA | Confidence: 78.94%
+Path: C:\Users\ACER\.cache\kagglehub\datasets\paultimothymooney\chest-xray-pneumonia\versions\2\chest_xray\test\NORMAL\IM-0075-0001.jpeg
+
+9. Actual: NORMAL | Predicted: PNEUMONIA | Confidence: 81.69%
+Path: C:\Users\ACER\.cache\kagglehub\datasets\paultimothymooney\chest-xray-pneumonia\versions\2\chest_xray\test\NORMAL\IM-0077-0001.jpeg
+
+10. Actual: NORMAL | Predicted: PNEUMONIA | Confidence: 96.45%
+Path: C:\Users\ACER\.cache\kagglehub\datasets\paultimothymooney\chest-xray-pneumonia\versions\2\chest_xray\test\NORMAL\IM-0079-0001.jpeg
+
+11. Actual: NORMAL | Predicted: PNEUMONIA | Confidence: 99.97%
+Path: C:\Users\ACER\.cache\kagglehub\datasets\paultimothymooney\chest-xray-pneumonia\versions\2\chest_xray\test\NORMAL\IM-0085-0001.jpeg
+
+12. Actual: NORMAL | Predicted: PNEUMONIA | Confidence: 60.43%
+Path: C:\Users\ACER\.cache\kagglehub\datasets\paultimothymooney\chest-xray-pneumonia\versions\2\chest_xray\test\NORMAL\IM-0087-0001.jpeg
+
+13. Actual: NORMAL | Predicted: PNEUMONIA | Confidence: 99.97%
+Path: C:\Users\ACER\.cache\kagglehub\datasets\paultimothymooney\chest-xray-pneumonia\versions\2\chest_xray\test\NORMAL\IM-0091-0001.jpeg
+
+14. Actual: NORMAL | Predicted: PNEUMONIA | Confidence: 99.31%
+Path: C:\Users\ACER\.cache\kagglehub\datasets\paultimothymooney\chest-xray-pneumonia\versions\2\chest_xray\test\NORMAL\IM-0101-0001.jpeg
+
+15. Actual: NORMAL | Predicted: PNEUMONIA | Confidence: 86.17%
+Path: C:\Users\ACER\.cache\kagglehub\datasets\paultimothymooney\chest-xray-pneumonia\versions\2\chest_xray\test\NORMAL\IM-0102-0001.jpeg
+
+16. Actual: NORMAL | Predicted: PNEUMONIA | Confidence: 98.74%
+Path: C:\Users\ACER\.cache\kagglehub\datasets\paultimothymooney\chest-xray-pneumonia\versions\2\chest_xray\test\NORMAL\IM-0110-0001.jpeg
+
+17. Actual: NORMAL | Predicted: PNEUMONIA | Confidence: 85.86%
+Path: C:\Users\ACER\.cache\kagglehub\datasets\paultimothymooney\chest-xray-pneumonia\versions\2\chest_xray\test\NORMAL\NORMAL2-IM-0072-0001.jpeg
+
+18. Actual: NORMAL | Predicted: PNEUMONIA | Confidence: 80.42%
+Path: C:\Users\ACER\.cache\kagglehub\datasets\paultimothymooney\chest-xray-pneumonia\versions\2\chest_xray\test\NORMAL\NORMAL2-IM-0117-0001.jpeg
+
+19. Actual: NORMAL | Predicted: PNEUMONIA | Confidence: 94.00%
+Path: C:\Users\ACER\.cache\kagglehub\datasets\paultimothymooney\chest-xray-pneumonia\versions\2\chest_xray\test\NORMAL\NORMAL2-IM-0150-0001.jpeg
+
+20. Actual: NORMAL | Predicted: PNEUMONIA | Confidence: 58.64%
+Path: C:\Users\ACER\.cache\kagglehub\datasets\paultimothymooney\chest-xray-pneumonia\versions\2\chest_xray\test\NORMAL\NORMAL2-IM-0173-0001-0001.jpeg
+
+21. Actual: NORMAL | Predicted: PNEUMONIA | Confidence: 58.64%
+Path: C:\Users\ACER\.cache\kagglehub\datasets\paultimothymooney\chest-xray-pneumonia\versions\2\chest_xray\test\NORMAL\NORMAL2-IM-0173-0001-0002.jpeg
+
+22. Actual: NORMAL | Predicted: PNEUMONIA | Confidence: 100.00%
+Path: C:\Users\ACER\.cache\kagglehub\datasets\paultimothymooney\chest-xray-pneumonia\versions\2\chest_xray\test\NORMAL\NORMAL2-IM-0195-0001.jpeg
+
+23. Actual: NORMAL | Predicted: PNEUMONIA | Confidence: 99.76%
+Path: C:\Users\ACER\.cache\kagglehub\datasets\paultimothymooney\chest-xray-pneumonia\versions\2\chest_xray\test\NORMAL\NORMAL2-IM-0196-0001.jpeg
+
+24. Actual: NORMAL | Predicted: PNEUMONIA | Confidence: 100.00%
+Path: C:\Users\ACER\.cache\kagglehub\datasets\paultimothymooney\chest-xray-pneumonia\versions\2\chest_xray\test\NORMAL\NORMAL2-IM-0198-0001.jpeg
+
+25. Actual: NORMAL | Predicted: PNEUMONIA | Confidence: 85.07%
+Path: C:\Users\ACER\.cache\kagglehub\datasets\paultimothymooney\chest-xray-pneumonia\versions\2\chest_xray\test\NORMAL\NORMAL2-IM-0199-0001.jpeg
+
+26. Actual: NORMAL | Predicted: PNEUMONIA | Confidence: 99.84%
+Path: C:\Users\ACER\.cache\kagglehub\datasets\paultimothymooney\chest-xray-pneumonia\versions\2\chest_xray\test\NORMAL\NORMAL2-IM-0201-0001.jpeg
+
+27. Actual: NORMAL | Predicted: PNEUMONIA | Confidence: 99.98%
+Path: C:\Users\ACER\.cache\kagglehub\datasets\paultimothymooney\chest-xray-pneumonia\versions\2\chest_xray\test\NORMAL\NORMAL2-IM-0206-0001.jpeg
+
+28. Actual: NORMAL | Predicted: PNEUMONIA | Confidence: 99.98%
+Path: C:\Users\ACER\.cache\kagglehub\datasets\paultimothymooney\chest-xray-pneumonia\versions\2\chest_xray\test\NORMAL\NORMAL2-IM-0210-0001.jpeg
+
+29. Actual: NORMAL | Predicted: PNEUMONIA | Confidence: 52.92%
+Path: C:\Users\ACER\.cache\kagglehub\datasets\paultimothymooney\chest-xray-pneumonia\versions\2\chest_xray\test\NORMAL\NORMAL2-IM-0217-0001.jpeg
+
+30. Actual: NORMAL | Predicted: PNEUMONIA | Confidence: 99.99%
+Path: C:\Users\ACER\.cache\kagglehub\datasets\paultimothymooney\chest-xray-pneumonia\versions\2\chest_xray\test\NORMAL\NORMAL2-IM-0219-0001.jpeg
+
+31. Actual: NORMAL | Predicted: PNEUMONIA | Confidence: 99.99%
+Path: C:\Users\ACER\.cache\kagglehub\datasets\paultimothymooney\chest-xray-pneumonia\versions\2\chest_xray\test\NORMAL\NORMAL2-IM-0221-0001.jpeg
+
+32. Actual: NORMAL | Predicted: PNEUMONIA | Confidence: 99.97%
+Path: C:\Users\ACER\.cache\kagglehub\datasets\paultimothymooney\chest-xray-pneumonia\versions\2\chest_xray\test\NORMAL\NORMAL2-IM-0222-0001.jpeg
+
+33. Actual: NORMAL | Predicted: PNEUMONIA | Confidence: 85.51%
+Path: C:\Users\ACER\.cache\kagglehub\datasets\paultimothymooney\chest-xray-pneumonia\versions\2\chest_xray\test\NORMAL\NORMAL2-IM-0229-0001.jpeg
+
+34. Actual: NORMAL | Predicted: PNEUMONIA | Confidence: 100.00%
+Path: C:\Users\ACER\.cache\kagglehub\datasets\paultimothymooney\chest-xray-pneumonia\versions\2\chest_xray\test\NORMAL\NORMAL2-IM-0232-0001.jpeg
+
+35. Actual: NORMAL | Predicted: PNEUMONIA | Confidence: 100.00%
+Path: C:\Users\ACER\.cache\kagglehub\datasets\paultimothymooney\chest-xray-pneumonia\versions\2\chest_xray\test\NORMAL\NORMAL2-IM-0233-0001.jpeg
+
+36. Actual: NORMAL | Predicted: PNEUMONIA | Confidence: 100.00%
+Path: C:\Users\ACER\.cache\kagglehub\datasets\paultimothymooney\chest-xray-pneumonia\versions\2\chest_xray\test\NORMAL\NORMAL2-IM-0237-0001.jpeg
+
+37. Actual: NORMAL | Predicted: PNEUMONIA | Confidence: 99.99%
+Path: C:\Users\ACER\.cache\kagglehub\datasets\paultimothymooney\chest-xray-pneumonia\versions\2\chest_xray\test\NORMAL\NORMAL2-IM-0238-0001.jpeg
+
+38. Actual: NORMAL | Predicted: PNEUMONIA | Confidence: 67.67%
+Path: C:\Users\ACER\.cache\kagglehub\datasets\paultimothymooney\chest-xray-pneumonia\versions\2\chest_xray\test\NORMAL\NORMAL2-IM-0246-0001-0001.jpeg
+
+39. Actual: NORMAL | Predicted: PNEUMONIA | Confidence: 67.67%
+Path: C:\Users\ACER\.cache\kagglehub\datasets\paultimothymooney\chest-xray-pneumonia\versions\2\chest_xray\test\NORMAL\NORMAL2-IM-0246-0001-0002.jpeg
+
+40. Actual: NORMAL | Predicted: PNEUMONIA | Confidence: 100.00%
+Path: C:\Users\ACER\.cache\kagglehub\datasets\paultimothymooney\chest-xray-pneumonia\versions\2\chest_xray\test\NORMAL\NORMAL2-IM-0246-0001.jpeg
+
+41. Actual: NORMAL | Predicted: PNEUMONIA | Confidence: 98.50%
+Path: C:\Users\ACER\.cache\kagglehub\datasets\paultimothymooney\chest-xray-pneumonia\versions\2\chest_xray\test\NORMAL\NORMAL2-IM-0249-0001.jpeg
+
+42. Actual: NORMAL | Predicted: PNEUMONIA | Confidence: 92.85%
+Path: C:\Users\ACER\.cache\kagglehub\datasets\paultimothymooney\chest-xray-pneumonia\versions\2\chest_xray\test\NORMAL\NORMAL2-IM-0251-0001.jpeg
+
+43. Actual: NORMAL | Predicted: PNEUMONIA | Confidence: 100.00%
+Path: C:\Users\ACER\.cache\kagglehub\datasets\paultimothymooney\chest-xray-pneumonia\versions\2\chest_xray\test\NORMAL\NORMAL2-IM-0252-0001.jpeg
+
+44. Actual: NORMAL | Predicted: PNEUMONIA | Confidence: 100.00%
+Path: C:\Users\ACER\.cache\kagglehub\datasets\paultimothymooney\chest-xray-pneumonia\versions\2\chest_xray\test\NORMAL\NORMAL2-IM-0256-0001.jpeg
+
+45. Actual: NORMAL | Predicted: PNEUMONIA | Confidence: 98.15%
+Path: C:\Users\ACER\.cache\kagglehub\datasets\paultimothymooney\chest-xray-pneumonia\versions\2\chest_xray\test\NORMAL\NORMAL2-IM-0259-0001.jpeg
+
+46. Actual: NORMAL | Predicted: PNEUMONIA | Confidence: 99.95%
+Path: C:\Users\ACER\.cache\kagglehub\datasets\paultimothymooney\chest-xray-pneumonia\versions\2\chest_xray\test\NORMAL\NORMAL2-IM-0267-0001.jpeg
+
+47. Actual: NORMAL | Predicted: PNEUMONIA | Confidence: 70.80%
+Path: C:\Users\ACER\.cache\kagglehub\datasets\paultimothymooney\chest-xray-pneumonia\versions\2\chest_xray\test\NORMAL\NORMAL2-IM-0271-0001.jpeg
+
+48. Actual: NORMAL | Predicted: PNEUMONIA | Confidence: 85.52%
+Path: C:\Users\ACER\.cache\kagglehub\datasets\paultimothymooney\chest-xray-pneumonia\versions\2\chest_xray\test\NORMAL\NORMAL2-IM-0273-0001.jpeg
+
+49. Actual: NORMAL | Predicted: PNEUMONIA | Confidence: 92.89%
+Path: C:\Users\ACER\.cache\kagglehub\datasets\paultimothymooney\chest-xray-pneumonia\versions\2\chest_xray\test\NORMAL\NORMAL2-IM-0277-0001.jpeg
+
+50. Actual: NORMAL | Predicted: PNEUMONIA | Confidence: 86.49%
+Path: C:\Users\ACER\.cache\kagglehub\datasets\paultimothymooney\chest-xray-pneumonia\versions\2\chest_xray\test\NORMAL\NORMAL2-IM-0278-0001.jpeg
+
+51. Actual: NORMAL | Predicted: PNEUMONIA | Confidence: 84.10%
+Path: C:\Users\ACER\.cache\kagglehub\datasets\paultimothymooney\chest-xray-pneumonia\versions\2\chest_xray\test\NORMAL\NORMAL2-IM-0280-0001.jpeg
+
+52. Actual: NORMAL | Predicted: PNEUMONIA | Confidence: 67.60%
+Path: C:\Users\ACER\.cache\kagglehub\datasets\paultimothymooney\chest-xray-pneumonia\versions\2\chest_xray\test\NORMAL\NORMAL2-IM-0283-0001.jpeg
+
+53. Actual: NORMAL | Predicted: PNEUMONIA | Confidence: 99.74%
+Path: C:\Users\ACER\.cache\kagglehub\datasets\paultimothymooney\chest-xray-pneumonia\versions\2\chest_xray\test\NORMAL\NORMAL2-IM-0285-0001.jpeg
+
+54. Actual: NORMAL | Predicted: PNEUMONIA | Confidence: 86.84%
+Path: C:\Users\ACER\.cache\kagglehub\datasets\paultimothymooney\chest-xray-pneumonia\versions\2\chest_xray\test\NORMAL\NORMAL2-IM-0297-0001.jpeg
+
+55. Actual: NORMAL | Predicted: PNEUMONIA | Confidence: 97.86%
+Path: C:\Users\ACER\.cache\kagglehub\datasets\paultimothymooney\chest-xray-pneumonia\versions\2\chest_xray\test\NORMAL\NORMAL2-IM-0302-0001.jpeg
+
+56. Actual: NORMAL | Predicted: PNEUMONIA | Confidence: 82.58%
+Path: C:\Users\ACER\.cache\kagglehub\datasets\paultimothymooney\chest-xray-pneumonia\versions\2\chest_xray\test\NORMAL\NORMAL2-IM-0303-0001.jpeg
+
+57. Actual: NORMAL | Predicted: PNEUMONIA | Confidence: 98.04%
+Path: C:\Users\ACER\.cache\kagglehub\datasets\paultimothymooney\chest-xray-pneumonia\versions\2\chest_xray\test\NORMAL\NORMAL2-IM-0304-0001.jpeg
+
+58. Actual: NORMAL | Predicted: PNEUMONIA | Confidence: 99.98%
+Path: C:\Users\ACER\.cache\kagglehub\datasets\paultimothymooney\chest-xray-pneumonia\versions\2\chest_xray\test\NORMAL\NORMAL2-IM-0315-0001.jpeg
+
+59. Actual: NORMAL | Predicted: PNEUMONIA | Confidence: 51.14%
+Path: C:\Users\ACER\.cache\kagglehub\datasets\paultimothymooney\chest-xray-pneumonia\versions\2\chest_xray\test\NORMAL\NORMAL2-IM-0316-0001.jpeg
+
+60. Actual: NORMAL | Predicted: PNEUMONIA | Confidence: 70.20%
+Path: C:\Users\ACER\.cache\kagglehub\datasets\paultimothymooney\chest-xray-pneumonia\versions\2\chest_xray\test\NORMAL\NORMAL2-IM-0327-0001.jpeg
+
+61. Actual: NORMAL | Predicted: PNEUMONIA | Confidence: 99.94%
+Path: C:\Users\ACER\.cache\kagglehub\datasets\paultimothymooney\chest-xray-pneumonia\versions\2\chest_xray\test\NORMAL\NORMAL2-IM-0330-0001.jpeg
+
+62. Actual: NORMAL | Predicted: PNEUMONIA | Confidence: 99.86%
+Path: C:\Users\ACER\.cache\kagglehub\datasets\paultimothymooney\chest-xray-pneumonia\versions\2\chest_xray\test\NORMAL\NORMAL2-IM-0335-0001.jpeg
+
+63. Actual: NORMAL | Predicted: PNEUMONIA | Confidence: 87.81%
+Path: C:\Users\ACER\.cache\kagglehub\datasets\paultimothymooney\chest-xray-pneumonia\versions\2\chest_xray\test\NORMAL\NORMAL2-IM-0336-0001.jpeg
+
+64. Actual: NORMAL | Predicted: PNEUMONIA | Confidence: 99.30%
+Path: C:\Users\ACER\.cache\kagglehub\datasets\paultimothymooney\chest-xray-pneumonia\versions\2\chest_xray\test\NORMAL\NORMAL2-IM-0338-0001.jpeg
+
+65. Actual: NORMAL | Predicted: PNEUMONIA | Confidence: 70.48%
+Path: C:\Users\ACER\.cache\kagglehub\datasets\paultimothymooney\chest-xray-pneumonia\versions\2\chest_xray\test\NORMAL\NORMAL2-IM-0345-0001.jpeg
+
+66. Actual: NORMAL | Predicted: PNEUMONIA | Confidence: 94.71%
+Path: C:\Users\ACER\.cache\kagglehub\datasets\paultimothymooney\chest-xray-pneumonia\versions\2\chest_xray\test\NORMAL\NORMAL2-IM-0347-0001.jpeg
+
+67. Actual: NORMAL | Predicted: PNEUMONIA | Confidence: 99.99%
+Path: C:\Users\ACER\.cache\kagglehub\datasets\paultimothymooney\chest-xray-pneumonia\versions\2\chest_xray\test\NORMAL\NORMAL2-IM-0349-0001.jpeg
+
+68. Actual: NORMAL | Predicted: PNEUMONIA | Confidence: 76.60%
+Path: C:\Users\ACER\.cache\kagglehub\datasets\paultimothymooney\chest-xray-pneumonia\versions\2\chest_xray\test\NORMAL\NORMAL2-IM-0353-0001.jpeg
+
+69. Actual: NORMAL | Predicted: PNEUMONIA | Confidence: 94.36%
+Path: C:\Users\ACER\.cache\kagglehub\datasets\paultimothymooney\chest-xray-pneumonia\versions\2\chest_xray\test\NORMAL\NORMAL2-IM-0360-0001.jpeg
+
+70. Actual: NORMAL | Predicted: PNEUMONIA | Confidence: 75.52%
+Path: C:\Users\ACER\.cache\kagglehub\datasets\paultimothymooney\chest-xray-pneumonia\versions\2\chest_xray\test\NORMAL\NORMAL2-IM-0362-0001.jpeg
+
+71. Actual: NORMAL | Predicted: PNEUMONIA | Confidence: 83.48%
+Path: C:\Users\ACER\.cache\kagglehub\datasets\paultimothymooney\chest-xray-pneumonia\versions\2\chest_xray\test\NORMAL\NORMAL2-IM-0364-0001.jpeg
+
+72. Actual: NORMAL | Predicted: PNEUMONIA | Confidence: 99.77%
+Path: C:\Users\ACER\.cache\kagglehub\datasets\paultimothymooney\chest-xray-pneumonia\versions\2\chest_xray\test\NORMAL\NORMAL2-IM-0366-0001.jpeg
+
+73. Actual: NORMAL | Predicted: PNEUMONIA | Confidence: 96.28%
+Path: C:\Users\ACER\.cache\kagglehub\datasets\paultimothymooney\chest-xray-pneumonia\versions\2\chest_xray\test\NORMAL\NORMAL2-IM-0368-0001.jpeg
+
+74. Actual: NORMAL | Predicted: PNEUMONIA | Confidence: 97.56%
+Path: C:\Users\ACER\.cache\kagglehub\datasets\paultimothymooney\chest-xray-pneumonia\versions\2\chest_xray\test\NORMAL\NORMAL2-IM-0369-0001.jpeg
+
+75. Actual: NORMAL | Predicted: PNEUMONIA | Confidence: 95.94%
+Path: C:\Users\ACER\.cache\kagglehub\datasets\paultimothymooney\chest-xray-pneumonia\versions\2\chest_xray\test\NORMAL\NORMAL2-IM-0373-0001.jpeg
+
+76. Actual: NORMAL | Predicted: PNEUMONIA | Confidence: 99.96%
+Path: C:\Users\ACER\.cache\kagglehub\datasets\paultimothymooney\chest-xray-pneumonia\versions\2\chest_xray\test\NORMAL\NORMAL2-IM-0374-0001-0002.jpeg
+
+77. Actual: NORMAL | Predicted: PNEUMONIA | Confidence: 95.36%
+Path: C:\Users\ACER\.cache\kagglehub\datasets\paultimothymooney\chest-xray-pneumonia\versions\2\chest_xray\test\NORMAL\NORMAL2-IM-0376-0001.jpeg
+
+78. Actual: NORMAL | Predicted: PNEUMONIA | Confidence: 97.76%
+Path: C:\Users\ACER\.cache\kagglehub\datasets\paultimothymooney\chest-xray-pneumonia\versions\2\chest_xray\test\NORMAL\NORMAL2-IM-0378-0001.jpeg
+
+79. Actual: NORMAL | Predicted: PNEUMONIA | Confidence: 96.19%
+Path: C:\Users\ACER\.cache\kagglehub\datasets\paultimothymooney\chest-xray-pneumonia\versions\2\chest_xray\test\NORMAL\NORMAL2-IM-0381-0001.jpeg
+
+80. Actual: PNEUMONIA | Predicted: NORMAL | Confidence: 99.73%
+Path: C:\Users\ACER\.cache\kagglehub\datasets\paultimothymooney\chest-xray-pneumonia\versions\2\chest_xray\test\PNEUMONIA\person154_bacteria_728.jpeg
+
+81. Actual: PNEUMONIA | Predicted: NORMAL | Confidence: 68.98%
+Path: C:\Users\ACER\.cache\kagglehub\datasets\paultimothymooney\chest-xray-pneumonia\versions\2\chest_xray\test\PNEUMONIA\person16_virus_47.jpeg
+

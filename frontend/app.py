@@ -70,7 +70,7 @@ st.markdown(
         <div class="hero-title">PneumoVision</div>
         <div>
             ResNet18 pneumonia classification with Grad-CAM
-            explanation and prediction history.
+            explanation.
         </div>
     </div>
     """,
@@ -178,34 +178,28 @@ if uploaded_file is not None:
 
             with c1:
                 st.markdown(
-                    f"""
-                    <div class="card">
-                        <div class="label">Prediction</div>
-                        <div class="value">{prediction}</div>
-                    </div>
-                    """,
+                    f'<div class="card">'
+                    f'<div class="label">Prediction</div>'
+                    f'<div class="value">{prediction}</div>'
+                    f'</div>',
                     unsafe_allow_html=True,
                 )
 
             with c2:
                 st.markdown(
-                    f"""
-                    <div class="card">
-                        <div class="label">Confidence</div>
-                        <div class="value">{confidence:.2f}%</div>
-                    </div>
-                    """,
+                    f'<div class="card">'
+                    f'<div class="label">Confidence</div>'
+                    f'<div class="value">{confidence:.2f}%</div>'
+                    f'</div>',
                     unsafe_allow_html=True,
                 )
 
             with c3:
                 st.markdown(
-                    """
-                    <div class="card">
-                        <div class="label">Model</div>
-                        <div class="value">ResNet18</div>
-                    </div>
-                    """,
+                    '<div class="card">'
+                    '<div class="label">Model</div>'
+                    '<div class="value">ResNet18</div>'
+                    '</div>',
                     unsafe_allow_html=True,
                 )
 
@@ -273,62 +267,6 @@ if uploaded_file is not None:
                     "Grad-CAM was not generated."
                 )
 
-            db_status = data.get(
-                "database",
-                {},
-            ).get(
-                "status",
-                "unknown",
-            )
-
-            if db_status == "saved":
-                st.success(
-                    "Prediction saved to PostgreSQL."
-                )
-            else:
-                st.warning(
-                    "Prediction completed, but database save failed."
-                )
-
             st.info(
                 "This application is an AI-assisted screening tool and not a clinical diagnosis."
             )
-
-
-st.markdown("### Prediction History")
-
-if st.button("Refresh History"):
-
-    try:
-        response = requests.get(
-            f"{API_URL}/predictions",
-            timeout=15,
-        )
-
-        if response.ok:
-
-            history = response.json().get(
-                "predictions",
-                [],
-            )
-
-            if history:
-                st.dataframe(
-                    history,
-                    width="stretch",
-                )
-            else:
-                st.info(
-                    "No predictions saved yet."
-                )
-
-        else:
-            st.error(
-                "Could not load prediction history."
-            )
-
-    except requests.RequestException as exc:
-        st.error(
-            "Could not connect to FastAPI."
-        )
-        st.code(str(exc))
