@@ -1,75 +1,78 @@
-# 🩻 PneumoVision — AI-Powered Pneumonia Detection
+# PneumoVision - Pneumonia Detection Application
 
-PneumoVision is an AI-assisted chest X-ray analysis application that uses a **ResNet18 deep learning model** to classify chest X-ray images into **NORMAL** or **PNEUMONIA**.
+PneumoVision is a chest X-ray classification project built using deep learning. The application takes a chest X-ray image as input and predicts whether the image belongs to the `NORMAL` or `PNEUMONIA` class.
 
-The application provides a web-based interface using **Streamlit** and exposes the trained model through a **FastAPI REST API**.
+The project uses a ResNet18 model for image classification, FastAPI for serving the model, and Streamlit for the frontend.
 
-> ⚠️ This project is intended for educational and AI-assisted screening purposes only. It is not a clinical diagnostic system and should not replace professional medical evaluation.
+> Note: This is an academic/portfolio project and is not intended for clinical diagnosis
 
----
+# Backend
+FastAPI: https://pneumonia-detection-application.onrender.com
 
-## 🚀 Live Application
-
-### Frontend
-**Streamlit:**  
-`Add your deployed Streamlit URL here`
-
-### Backend API
-**FastAPI:**  
-https://pneumonia-detection-application.onrender.com
-
-### API Documentation
+# API Documentation
 https://pneumonia-detection-application.onrender.com/docs
 
----
+# Features
 
-## ✨ Features
+- Upload chest X-ray images in JPG, JPEG, or PNG format
+- Classify images as NORMAL or PNEUMONIA
+- Display prediction confidence
+- Handle uncertain predictions
+- Image validation before inference
+- REST API using FastAPI
+- Streamlit-based user interface
+- ResNet18 transfer learning
+- ONNX Runtime for lightweight inference deployment
+- Deployed backend using Render
 
-- 🩻 Chest X-ray image upload
-- 🤖 ResNet18-based pneumonia classification
-- 📊 Prediction confidence
-- 🟢 NORMAL classification
-- 🔴 PNEUMONIA classification
-- 🟡 UNCERTAIN / UNSUPPORTED handling
-- ⚡ FastAPI REST API
-- 🎨 Streamlit interactive frontend
-- 🔍 Basic image validation
-- 🧠 GPU-supported model training
-- ☁️ Cloud deployment using Render
-- 📦 ONNX Runtime optimized inference for lightweight deployment
-- 🛡️ Conservative confidence-based prediction handling
+# Architecture
 
----
+Streamlit Frontend
+       |
+       | POST /predict
+       v
+FastAPI Backend
+       |
+       v
+Image Preprocessing
+       |
+       v
+ResNet18 Model
+       |
+       v
+Prediction
+       |
+       +---- NORMAL
+       |
+       +---- PNEUMONIA
+       |
+       +---- UNCERTAIN / UNSUPPORTED
 
-## 🏗️ System Architecture
+Tech Stack
 
-```text
-                 ┌──────────────────────┐
-                 │     Streamlit UI     │
-                 │      Frontend        │
-                 └──────────┬───────────┘
-                            │
-                            │ HTTP POST
-                            ▼
-                 ┌──────────────────────┐
-                 │      FastAPI        │
-                 │      Backend        │
-                 └──────────┬───────────┘
-                            │
-                            ▼
-                 ┌──────────────────────┐
-                 │   Image Processing   │
-                 │ Resize + Normalize   │
-                 └──────────┬───────────┘
-                            │
-                            ▼
-                 ┌──────────────────────┐
-                 │      ResNet18       │
-                 │  Pneumonia Model    │
-                 └──────────┬───────────┘
-                            │
-                            ▼
-              ┌────────────────────────────┐
-              │ NORMAL / PNEUMONIA /       │
-              │ UNCERTAIN / UNSUPPORTED    │
-              └────────────────────────────┘
+Machine Learning
+
+Python
+PyTorch
+Torchvision
+ResNet18
+Scikit-learn
+NumPy
+
+Backend
+
+FastAPI
+Uvicorn
+Pillow
+
+Frontend
+
+Streamlit
+HTML
+CSS
+
+Deployment
+
+GitHub
+Render
+ONNX Runtime       
