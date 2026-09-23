@@ -6,7 +6,6 @@ requests
 pillow
 numpy
 opencv-python-headless
-torch
-torchvision
 python-dotenv
 grad-cam
+onnxruntime
