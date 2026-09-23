@@ -232,7 +232,7 @@ if uploaded_file is not None:
         # RESULT
         # ====================================================
 
-        result = data["result"]
+        result = data
 
         prediction = result["prediction"]
 

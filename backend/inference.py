@@ -1,33 +1,28 @@
+# backend/inference.py
+
 from pathlib import Path
 
-import torch
-import torch.nn as nn
+import numpy as np
+import onnxruntime as ort
+
 from PIL import Image
-from torchvision import transforms
-from torchvision.models import resnet18
 
 
 # =========================================================
-# DEVICE
+# PATH
 # =========================================================
 
-DEVICE = torch.device(
-    "cuda"
-    if torch.cuda.is_available()
-    else "cpu"
+BASE_DIR = (
+    Path(__file__)
+    .resolve()
+    .parent
+    .parent
 )
-
-
-# =========================================================
-# MODEL PATH
-# =========================================================
-
-BASE_DIR = Path(__file__).resolve().parent.parent
 
 MODEL_PATH = (
     BASE_DIR
     / "model"
-    / "chest_xray_resnet18.pth"
+    / "chest_xray_resnet18.onnx"
 )
 
 
@@ -42,127 +37,142 @@ CLASS_NAMES = [
 
 
 # =========================================================
-# IMAGE TRANSFORM
+# ONNX RUNTIME
 # =========================================================
 
-TRANSFORM = transforms.Compose([
-    transforms.Resize((224, 224)),
+session = ort.InferenceSession(
+    str(MODEL_PATH),
+    providers=[
+        "CPUExecutionProvider"
+    ],
+)
 
-    transforms.ToTensor(),
+INPUT_NAME = (
+    session.get_inputs()[0].name
+)
 
-    transforms.Normalize(
-        mean=[
+
+# =========================================================
+# PREPROCESS
+# =========================================================
+
+def preprocess_image(
+    image: Image.Image
+):
+
+    image = image.convert("RGB")
+
+    image = image.resize(
+        (224, 224)
+    )
+
+    image_array = np.asarray(
+        image,
+        dtype=np.float32,
+    )
+
+    image_array = (
+        image_array / 255.0
+    )
+
+    mean = np.array(
+        [
             0.485,
             0.456,
             0.406,
         ],
-        std=[
+        dtype=np.float32,
+    )
+
+    std = np.array(
+        [
             0.229,
             0.224,
             0.225,
         ],
-    ),
-])
-
-
-# =========================================================
-# LOAD MODEL
-# =========================================================
-
-model = resnet18(
-    weights=None
-)
-
-model.fc = nn.Linear(
-    model.fc.in_features,
-    2,
-)
-
-
-state_dict = torch.load(
-    MODEL_PATH,
-    map_location=DEVICE,
-)
-
-model.load_state_dict(
-    state_dict
-)
-
-model = model.to(DEVICE)
-
-model.eval()
-
-
-# =========================================================
-# PREDICTION FUNCTION
-# =========================================================
-
-def predict_image(image: Image.Image):
-
-    # -----------------------------------------------------
-    # Prepare image
-    # -----------------------------------------------------
-
-    image = image.convert("RGB")
-
-    tensor = TRANSFORM(image)
-
-    tensor = tensor.unsqueeze(0)
-
-    tensor = tensor.to(DEVICE)
-
-
-    # -----------------------------------------------------
-    # Original prediction
-    # -----------------------------------------------------
-
-    with torch.no_grad():
-
-        output = model(tensor)
-
-        probabilities = torch.softmax(
-            output,
-            dim=1,
-        )[0]
-
-
-    normal_probability = (
-        probabilities[0].item()
+        dtype=np.float32,
     )
 
-    pneumonia_probability = (
-        probabilities[1].item()
+    image_array = (
+        image_array - mean
+    ) / std
+
+    image_array = np.transpose(
+        image_array,
+        (2, 0, 1),
+    )
+
+    image_array = np.expand_dims(
+        image_array,
+        axis=0,
+    )
+
+    return image_array.astype(
+        np.float32
     )
 
 
-    # -----------------------------------------------------
-    # Confidence
-    # -----------------------------------------------------
+# =========================================================
+# SOFTMAX
+# =========================================================
 
-    confidence = max(
-        normal_probability,
-        pneumonia_probability,
-    ) * 100
+def softmax(values):
+
+    values = (
+        values
+        - np.max(values)
+    )
+
+    exp_values = np.exp(values)
+
+    return (
+        exp_values
+        / np.sum(exp_values)
+    )
+
+
+# =========================================================
+# PREDICTION
+# =========================================================
+
+def predict_image(
+    image: Image.Image
+):
+
+    input_tensor = (
+        preprocess_image(image)
+    )
+
+    outputs = session.run(
+        None,
+        {
+            INPUT_NAME: input_tensor
+        },
+    )
+
+    logits = outputs[0][0]
+
+    probabilities = softmax(
+        logits
+    )
+
+    normal_probability = float(
+        probabilities[0]
+    )
+
+    pneumonia_probability = float(
+        probabilities[1]
+    )
 
 
     # =====================================================
-    # CONSERVATIVE DECISION LOGIC
+    # DECISION
     # =====================================================
-
-    # A prediction is accepted only when the model has
-    # sufficiently strong probability for that class.
-    #
-    # This avoids automatically calling borderline cases
-    # pneumonia.
 
     NORMAL_THRESHOLD = 0.80
 
     PNEUMONIA_THRESHOLD = 0.90
 
-
-    # -----------------------------------------------------
-    # NORMAL
-    # -----------------------------------------------------
 
     if (
         normal_probability
@@ -172,6 +182,10 @@ def predict_image(image: Image.Image):
     ):
 
         prediction = "NORMAL"
+
+        confidence = (
+            normal_probability * 100
+        )
 
         supported = True
 
@@ -183,10 +197,6 @@ def predict_image(image: Image.Image):
         )
 
 
-    # -----------------------------------------------------
-    # PNEUMONIA
-    # -----------------------------------------------------
-
     elif (
         pneumonia_probability
         >= PNEUMONIA_THRESHOLD
@@ -195,6 +205,10 @@ def predict_image(image: Image.Image):
     ):
 
         prediction = "PNEUMONIA"
+
+        confidence = (
+            pneumonia_probability * 100
+        )
 
         supported = True
 
@@ -206,14 +220,18 @@ def predict_image(image: Image.Image):
         )
 
 
-    # -----------------------------------------------------
-    # UNCERTAIN
-    # -----------------------------------------------------
-
     else:
 
         prediction = (
             "UNCERTAIN / UNSUPPORTED"
+        )
+
+        confidence = (
+            max(
+                normal_probability,
+                pneumonia_probability,
+            )
+            * 100
         )
 
         supported = False
@@ -222,16 +240,12 @@ def predict_image(image: Image.Image):
 
         reason = (
             "The model confidence is not "
-            "sufficient for a reliable "
-            "NORMAL or PNEUMONIA prediction."
+            "sufficient for a reliable prediction."
         )
 
 
-    # =====================================================
-    # RETURN
-    # =====================================================
-
     return {
+
         "prediction": prediction,
 
         "confidence": round(
@@ -254,21 +268,13 @@ def predict_image(image: Image.Image):
         "supported": supported,
 
         "threshold": {
-            "normal": NORMAL_THRESHOLD * 100,
-            "pneumonia": PNEUMONIA_THRESHOLD * 100,
+            "normal": 80.0,
+            "pneumonia": 90.0,
         },
 
         "reason": reason,
 
         "consistency": {
             "original_prediction": prediction,
-            "normal_probability": round(
-                normal_probability * 100,
-                2,
-            ),
-            "pneumonia_probability": round(
-                pneumonia_probability * 100,
-                2,
-            ),
         },
     }
