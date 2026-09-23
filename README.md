@@ -53,9 +53,9 @@ Prediction
        |
        +---- UNCERTAIN / UNSUPPORTED
 
-Tech Stack
+#Tech stack
 
-Machine Learning
+#Machine Learning
 
 Python
 PyTorch
@@ -64,20 +64,83 @@ ResNet18
 Scikit-learn
 NumPy
 
-Backend
+#Backend
 
 FastAPI
 Uvicorn
 Pillow
 
-Frontend
+#Frontend
 
 Streamlit
 HTML
 CSS
 
-Deployment
+#Deployment
 
 GitHub
 Render
 ONNX Runtime       
+
+#Model
+
+The application uses ResNet18, a convolutional neural network architecture commonly used for image classification.
+
+The model was trained for binary classification:
+
+0 → NORMAL
+1 → PNEUMONIA
+
+For deployment, the trained PyTorch model was converted to ONNX format.
+
+Why ONNX Runtime?
+
+The original model was trained using PyTorch. For cloud deployment, ONNX Runtime is used to avoid loading the complete PyTorch runtime during inference.
+
+This makes the backend more suitable for a lightweight CPU deployment.
+
+#Model Performance
+
+Evaluation on the test dataset:
+
+#Metric	Score
+Accuracy	88.46%
+
+#macro Precision	91.98%
+
+#Macro Recall	84.70%
+
+#Macro F1-Score	86.72%
+
+Classification Report
+Class	Precision	Recall	F1-Score
+NORMAL	0.99	0.70	0.82
+PNEUMONIA	0.85	1.00	0.92
+Confusion Matrix
+                 Predicted
+               NORMAL  PNEUMONIA
+
+Actual NORMAL     163       71
+Actual PNEUMONIA    1      389
+
+The test results show that the model performs differently across the two classes, so the application also supports an uncertain outcome for predictions that do not meet the configured confidence conditions.
+
+
+Future Improvements
+
+Improve model performance using additional training data
+Add better class balancing and augmentation
+Improve false-positive handling
+Add model explainability
+Add automated model monitoring
+Improve frontend error handling
+Add additional medical imaging datasets for evaluation
+Disclaimer
+
+This project is developed for educational and demonstration purposes only.
+
+It is not a medical diagnostic system and should not be used to make medical decisions. Any medical interpretation should be performed by a qualified healthcare professional.
+
+Author
+
+Gaurav Gangwar
