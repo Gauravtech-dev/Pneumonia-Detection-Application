@@ -6,6 +6,11 @@ The project uses a ResNet18 model for image classification, FastAPI for serving 
 
 > Note: This is an academic/portfolio project and is not intended for clinical diagnosis
 
+# Frontend: 
+https://fr-4dzc.onrender.com
+
+
+
 # Backend
 FastAPI: https://pneumonia-detection-application.onrender.com
 
